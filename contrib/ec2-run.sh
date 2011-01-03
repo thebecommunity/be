@@ -41,6 +41,9 @@ if [ ! -e sirikata.git ]; then
     exit -1
 fi
 
+# Run the main WSGI python server process
+./server/server.py &
+
 # Run lighttpd as the web server
 cd kataspace.git || bail "Couldn't find KataSpace code."
 # lighttpd on Ubuntu starts itself automatically, so stop it first
@@ -49,7 +52,7 @@ sudo /etc/init.d/lighttpd stop
 sudo mkdir -p /tmp/lighttpdcompress || bail "Couldn't create lighttpd caching directory"
 sudo chown root:root /tmp/lighttpdcompress || bail "Couldn't chown lighttpd caching directory"
 # And then run our version
-sudo ./externals/katajs/contrib/lighttpd.py 80 /tmp/lighttpdcompress &
+sudo ./contrib/lighttpd.py 80 /tmp/lighttpdcompress &
 
 
 # Generate our configuration

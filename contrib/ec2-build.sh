@@ -31,6 +31,11 @@ bail "Couldn't install required ruby system packages."
 sudo gem install god || \
 bail "Couldn't install god."
 
+# Install flup for handling fcgi requests from lighttpd, i.e. for all
+# our server-side web application logic
+sudo apt-get install -y python-flup ||
+bail "Couldn't install flup."
+
 # Check out and build Sirikata space server
 git clone git://github.com/sirikata/sirikata.git sirikata.git && \
 cd sirikata.git && \
