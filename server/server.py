@@ -2,6 +2,9 @@
 
 import notfound
 import auth
+import profile
+
+import re
 
 static_handlers = {
     "/404" : notfound.handle_404,
@@ -10,15 +13,21 @@ static_handlers = {
     "/logout" : auth.handle_logout,
     }
 
+dynamic_handlers = {
+    re.compile('.*/profile/json') : profile.handle_profile_json
+    }
+
 def myapp(environ, start_response):
-    if environ['PATH_INFO'] in static_handlers:
-        return static_handlers[ environ['PATH_INFO'] ](environ, start_response)
+    doc = environ['PATH_INFO']
+    if doc in static_handlers:
+        return static_handlers[doc](environ, start_response)
 
-    if not auth.check_auth(environ, start_response):
-        return []
+    for pat,handler in dynamic_handlers.items():
+        mat = pat.match(doc)
+        if mat: return handler(environ, start_response)
 
-    start_response('200 OK', [('Content-Type', 'text/plain')])
-    return ['Hello World!\n']
+    start_response('404 Not Found', [('Content-Type', 'text/plain')])
+    return []
 
 if __name__ == '__main__':
     from flup.server.fcgi import WSGIServer
