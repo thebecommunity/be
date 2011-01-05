@@ -18,8 +18,8 @@ try:
 except ImportError: # Python < 2.5 #pragma NO COVERAGE
     from sha import new as sha1    #pragma NO COVERAGE
 
-import sqlite3
 import urllib
+import db
 
 def hash_user_credential(cleartext_password):
     digest = sha1(cleartext_password).hexdigest()
@@ -30,13 +30,10 @@ def validate_user_credential(cleartext_password, stored_password_hash):
     digest = hash_user_credential(cleartext_password)
     return (stored_password_hash == digest)
 
-def create_db_conn():
-    return sqlite3.connect(deployment.db_filename, check_same_thread = False)
-
 def create_auth_middleware(app):
     sqlpasswd = SQLAuthenticatorPlugin(
         'SELECT user_id, password FROM users WHERE login = :login',
-        create_db_conn,
+        db.create_db_conn,
         validate_user_credential
         )
     auth_tkt = AuthTktCookiePlugin(deployment.cookie_secret, 'auth_tkt')
