@@ -33,8 +33,8 @@ bail "Couldn't install god."
 
 # Install flup for handling fcgi requests from lighttpd, i.e. for all
 # our server-side web application logic. Also install repoze.who which
-# is used for auth
-sudo apt-get install -y python-flup python-repoze.who ||
+# is used for auth, and genshi for templates
+sudo apt-get install -y python-flup python-repoze.who python-genshi ||
 bail "Couldn't install flup."
 
 # Check out and build Sirikata space server

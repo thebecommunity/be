@@ -20,6 +20,7 @@ except ImportError: # Python < 2.5 #pragma NO COVERAGE
 
 import urllib
 import db
+import template
 
 def hash_user_credential(cleartext_password):
     digest = sha1(cleartext_password).hexdigest()
@@ -71,6 +72,7 @@ def check_auth(environ, start_response):
     return True
 
 
+@template.output('login.html')
 def handle_login(environ, start_response):
     # Always generate a normal page
     start_response('200 OK', [('Content-Type', 'text/html')])
@@ -80,43 +82,14 @@ def handle_login(environ, start_response):
         return []
 
     # Otherwise, generate the form
-    came_from_field = ''
+    came_from = None
     if environ['QUERY_STRING'].startswith('came_from='):
         came_from = environ['QUERY_STRING'].replace('came_from=', '', 1)
         came_from = urllib.unquote(came_from)
-        came_from_field = '<input type="hidden" name="came_from" value="%s"></input>' % (came_from)
 
-    frm = """
-<html>
-<head>
-  <title>Log In</title>
-</head>
-<body>
-  <div>
-     <b>Log In</b>
-  </div>
-  <br/>
-  <form method="POST" action="/dologin">
-    %s
-    <table border="0">
-    <tr>
-      <td>User Name</td>
-      <td><input type="text" name="login"></input></td>
-    </tr>
-    <tr>
-      <td>Password</td>
-      <td><input type="password" name="password"></input></td>
-    </tr>
-    <tr>
-      <td></td>
-      <td><input type="submit" name="submit" value="Log In"/></td>
-    </tr>
-    </table>
-  </form>
-</body>
-</html>
-""" % (came_from_field)
-    return [frm]
+    result = template.render(came_from=came_from)
+
+    return [result]
 
 def handle_logout(environ, start_response):
     # Returning 401 triggers the cookie removal
