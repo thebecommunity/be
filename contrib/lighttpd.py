@@ -30,9 +30,7 @@ server.modules              = (
 )
 server.document-root       = "%(pwd)s/"
 server.errorlog            = "%(pwd)s/lighttpd.error.log"
-index-file.names           = ( "index.php", "index.html",
-                               "index.htm", "default.htm",
-                               "index.lighttpd.html" )
+index-file.names           = ( )
 dir-listing.activate       = "enable"
 accesslog.filename         = "%(pwd)s/lighttpd.access.log"
 url.access-deny            = ( "~", ".inc" )
@@ -98,7 +96,7 @@ mimetype.assign             = (
 server.error-handler-404 = "/404"
 
 # Anything except the few static resources are handled by fcgi/our python scripts
-$HTTP["url"] !~ "^/$|^/static/|^/css/|^/scripts/|^/externals/" {
+$HTTP["url"] !~ "^/static/|^/css/|^/scripts/|^/externals/" {
     fastcgi.server = ("/" => ((
         "host" => "127.0.0.1",
         "port" => 9999,

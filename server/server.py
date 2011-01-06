@@ -3,6 +3,7 @@
 import notfound
 import auth
 import profile
+import viewer
 
 import re
 
@@ -11,6 +12,7 @@ static_handlers = {
     "/login" : auth.handle_login,
     "/dologin" : auth.handle_login,
     "/logout" : auth.handle_logout,
+    "/viewer" : viewer.handle_viewer,
     }
 
 dynamic_handlers = {
