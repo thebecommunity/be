@@ -4,6 +4,7 @@ import deployment
 import template
 import auth
 import db
+import profile
 
 import time
 import cgi
@@ -14,7 +15,7 @@ def handle_report(environ, start_response):
     if not auth.check_auth(environ, start_response):
         return []
 
-    name = auth.user(environ)
+    user_id = auth.user(environ)
 
     form = cgi.FieldStorage(fp=environ['wsgi.input'],
                             environ=environ)
@@ -25,11 +26,11 @@ def handle_report(environ, start_response):
 
     c = db.conn.cursor()
     vals = {
-        'login' : name,
+        'id' : user_id,
         'time' : int(time.time()),
         'msg' : msg
         }
-    c.execute('insert into chat (login, time, msg) values(:login, :time, :msg)', vals)
+    c.execute('insert into chat (user_id, time, msg) values(:id, :time, :msg)', vals)
     db.conn.commit()
 
     c.close()
@@ -55,12 +56,12 @@ def handle_log(environ, start_response):
 
     c = db.conn.cursor()
     # FIXME query string to control this, at a minimum limit the time span
-    c.execute('select login,time,msg from chat')
+    c.execute('select user_id,time,msg from chat')
 
     msgs = []
     for row in c:
         msg = Message(
-            user=row[0],
+            user=profile.name(row[0]),
             t=time.gmtime(int(row[1])),
             message=row[2]
             )

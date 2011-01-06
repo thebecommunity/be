@@ -75,6 +75,22 @@ def check_auth(environ, start_response):
 
     return True
 
+def lookup_userid(name):
+    """Look up a user id based on the username."""
+    c = db.conn.cursor()
+    c.execute( 'select user_id from users where login = :login', { 'login' : name } )
+
+    # Login should be unique
+    results = c.fetchall()
+    if len(results) != 1:
+        c.close()
+        return None
+    (result,) = results
+    result = result[0]
+
+    c.close()
+
+    return result
 
 @template.output('login.html')
 def handle_login(environ, start_response):
