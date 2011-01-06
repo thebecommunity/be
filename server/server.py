@@ -4,6 +4,7 @@ import notfound
 import auth
 import profile
 import viewer
+import chat
 
 import re
 
@@ -13,6 +14,8 @@ static_handlers = {
     "/dologin" : auth.handle_login,
     "/logout" : auth.handle_logout,
     "/viewer" : viewer.handle_viewer,
+    "/chat/report" : chat.handle_report,
+    "/chat/log" : chat.handle_log,
     }
 
 dynamic_handlers = {

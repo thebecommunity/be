@@ -1,0 +1,21 @@
+<?python
+   import time
+?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/">
+  <head>
+    <title>Chat Log</title>
+  </head>
+  <body class="index">
+    <div id="header">
+      <h1>Chat Log</h1>
+    </div>
+
+    <ol py:if="msgs">
+      <li py:for="msg in msgs">
+        ${msg.user} (${time.strftime('%x %X', msg.time)}): ${msg.message}
+      </li>
+    </ol>
+  </body>
+</html>

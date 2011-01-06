@@ -61,6 +61,10 @@ def authorized(environ):
     """Checks if the user is logged in."""
     return ('repoze.who.identity' in environ)
 
+def user(environ):
+    """Returns the user identity for the current user."""
+    return environ['repoze.who.identity']['repoze.who.userid']
+
 def check_auth(environ, start_response):
     """Checks if the user is logged in. Generates 401 and returns
     False if not authorized. Returns True if authorized."""
