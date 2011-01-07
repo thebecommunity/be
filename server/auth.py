@@ -93,6 +93,38 @@ def lookup_userid(name):
 
     return result
 
+def is_admin(user_id):
+    """Look up if a user id has admin privileges."""
+    c = db.conn.cursor()
+    c.execute( 'select admin from users where user_id = :id', { 'id' : user_id } )
+
+    # Login should be unique
+    results = c.fetchall()
+    if len(results) != 1:
+        c.close()
+        return None
+    (result,) = results
+    result = result[0]
+
+    c.close()
+
+    return (result != 0)
+
+def check_admin(environ, start_response):
+    """Checks if the user is logged in and an admin. Generates 401 and returns
+    False if not authorized. Returns True if authorized."""
+
+    if not authorized(environ):
+        start_response('401 Unauthorized', [('Content-Type', 'text/plain')])
+        return False
+
+    user_id = user(environ)
+    if not is_admin(user_id):
+        start_response('401 Unauthorized', [('Content-Type', 'text/plain')])
+        return False
+
+    return True
+
 @template.output('login.html')
 def handle_login(environ, start_response):
     # Always generate a normal page
@@ -147,4 +179,39 @@ def handle_passwd(environ, start_response):
     # If we got here, we didn't get a full change password post, so generate the form for it
     start_response('200 OK', [('Content-Type', 'text/html')])
     result = template.render()
+    return [result]
+
+from random import choice
+import string
+
+def GenPasswd(length=8, chars=string.letters + string.digits):
+    return ''.join([choice(chars) for i in range(length)])
+
+@template.output('adduser.html')
+def handle_add(environ, start_response):
+    # If we're already authorized, ignore
+    if not check_admin(environ, start_response):
+        return []
+
+    new_username = ''
+    new_passwd = ''
+    if environ['REQUEST_METHOD'] == 'POST':
+        form = cgi.FieldStorage(fp=environ['wsgi.input'],
+                                environ=environ)
+        if 'username' in form:
+            new_username = form['username'].value
+            new_passwd = GenPasswd()
+            digest = hash_user_credential(new_passwd)
+
+            c = db.conn.cursor()
+            vals = {
+                'login' : new_username,
+                'password' : digest
+                }
+            c.execute('insert into users(login, password, admin) values(:login, :password, 0)', vals)
+            db.conn.commit()
+            c.close()
+
+    start_response('200 OK', [('Content-Type', 'text/html')])
+    result = template.render(username=new_username,password=new_passwd)
     return [result]

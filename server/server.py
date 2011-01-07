@@ -14,6 +14,7 @@ static_handlers = {
     "/account/dologin" : auth.handle_login,
     "/account/logout" : auth.handle_logout,
     "/account/password" : auth.handle_passwd,
+    "/account/add" : auth.handle_add,
     "/viewer" : viewer.handle_viewer,
     "/chat/report" : chat.handle_report,
     "/chat/log" : chat.handle_log,

@@ -20,14 +20,17 @@ argi = 1
 while argi < len(sys.argv):
     arg = sys.argv[argi]
     if arg == 'init':
-        conn.execute('create table if not exists users (user_id integer primary key, login text unique, password text)')
+        conn.execute('create table if not exists users (user_id integer primary key, login text unique, password text, admin integer)')
         conn.execute('create table if not exists profiles (user_id integer primary key, name text, age integer)')
         conn.execute('create table if not exists chat (user_id integer, time integer, msg text)')
         argi += 1
     elif arg == 'adduser':
+        # Note that these users are always admins, i.e. this is only
+        # for bootstrapping. Use the web interface for adding normal
+        # users
         name = sys.argv[argi+1]
         pw = hash_user_credential(sys.argv[argi+2])
-        conn.execute('insert into users(login, password) values(?, ?)', (name, pw))
+        conn.execute('insert into users(login, password, admin) values(?, ?, 1)', (name, pw))
         argi += 3
     else:
         print "Ignoring unknown command:", arg
