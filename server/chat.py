@@ -49,7 +49,7 @@ class Message:
 def handle_log(environ, start_response):
     """Handles queries for the chat log."""
 
-    if not auth.check_auth(environ, start_response):
+    if not auth.check_admin(environ, start_response):
         return []
 
     start_response('200 OK', [('Content-Type', 'text/html')])
