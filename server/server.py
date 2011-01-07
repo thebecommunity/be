@@ -10,9 +10,10 @@ import re
 
 static_handlers = {
     "/404" : notfound.handle_404,
-    "/login" : auth.handle_login,
-    "/dologin" : auth.handle_login,
-    "/logout" : auth.handle_logout,
+    "/account/login" : auth.handle_login,
+    "/account/dologin" : auth.handle_login,
+    "/account/logout" : auth.handle_logout,
+    "/account/password" : auth.handle_passwd,
     "/viewer" : viewer.handle_viewer,
     "/chat/report" : chat.handle_report,
     "/chat/log" : chat.handle_log,

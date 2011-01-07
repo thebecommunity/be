@@ -21,6 +21,7 @@ except ImportError: # Python < 2.5 #pragma NO COVERAGE
 import urllib
 import db
 import template
+import cgi
 
 def hash_user_credential(cleartext_password):
     digest = sha1(cleartext_password).hexdigest()
@@ -38,7 +39,7 @@ def create_auth_middleware(app):
         validate_user_credential
         )
     auth_tkt = AuthTktCookiePlugin(deployment.cookie_secret, 'auth_tkt')
-    form = RedirectingFormPlugin('/login', '/dologin', '/logout', 'auth_tkt')
+    form = RedirectingFormPlugin('/account/login', '/account/dologin', '/account/logout', 'auth_tkt')
 
     identifiers = [('form', form),('auth_tkt',auth_tkt)]
     authenticators = [('sql', sqlpasswd)]
@@ -115,3 +116,35 @@ def handle_logout(environ, start_response):
     # Returning 401 triggers the cookie removal
     start_response('401 Unauthorized', [('Content-Type', 'text/plain')])
     return []
+
+@template.output('passwd.html')
+def handle_passwd(environ, start_response):
+    # If we're already authorized, ignore
+    if not check_auth(environ, start_response):
+        return []
+
+    if environ['REQUEST_METHOD'] == 'POST':
+        form = cgi.FieldStorage(fp=environ['wsgi.input'],
+                                environ=environ)
+        if 'password' in form:
+            user_id = user(environ)
+
+            new_passwd = form['password'].value
+            digest = hash_user_credential(new_passwd)
+
+            c = db.conn.cursor()
+            vals = {
+                'id' : user_id,
+                'password' : digest
+                }
+            c.execute('update users set password = :password where user_id = :id', vals)
+            db.conn.commit()
+            c.close()
+
+            start_response('200 OK', [('Content-Type', 'text/html')])
+            return []
+
+    # If we got here, we didn't get a full change password post, so generate the form for it
+    start_response('200 OK', [('Content-Type', 'text/html')])
+    result = template.render()
+    return [result]
