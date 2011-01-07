@@ -102,6 +102,8 @@ Kata.require([
                 }
             )
         );
+        // Log to server
+        $.post('chat/report', { msg: msg });
     };
     ChatUI.prototype._getMessageSentHandler = function() {
         var self = this;
