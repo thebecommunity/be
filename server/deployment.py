@@ -7,3 +7,6 @@ db_filename = 'be.db'
 
 # This *must* be changed or your login cookies will not be secure.
 cookie_secret = 'secret'
+
+# Deployment name
+title = "the BE community"

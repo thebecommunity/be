@@ -12,5 +12,5 @@ def handle_viewer(environ, start_response):
     #if authorized(environ):
     #    return []
 
-    result = template.render()
+    result = template.render(deployment=deployment)
     return [result]

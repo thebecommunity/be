@@ -140,7 +140,7 @@ def handle_login(environ, start_response):
         came_from = environ['QUERY_STRING'].replace('came_from=', '', 1)
         came_from = urllib.unquote(came_from)
 
-    result = template.render(came_from=came_from)
+    result = template.render(deployment=deployment, came_from=came_from)
 
     return [result]
 
@@ -178,7 +178,7 @@ def handle_passwd(environ, start_response):
 
     # If we got here, we didn't get a full change password post, so generate the form for it
     start_response('200 OK', [('Content-Type', 'text/html')])
-    result = template.render()
+    result = template.render(deployment=deployment)
     return [result]
 
 from random import choice
@@ -213,5 +213,5 @@ def handle_add(environ, start_response):
             c.close()
 
     start_response('200 OK', [('Content-Type', 'text/html')])
-    result = template.render(username=new_username,password=new_passwd)
+    result = template.render(deployment=deployment, username=new_username, password=new_passwd)
     return [result]

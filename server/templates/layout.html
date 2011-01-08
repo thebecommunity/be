@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/" py:strip="">
+  <py:match path="head" once="true">
+    <head py:attrs="select('@*')">
+      <title py:with="title = list(select('title/text()'))">
+        <py:if test="deployment.title">${deployment.title}</py:if>
+        <py:if test="title">: ${title}</py:if>
+      </title>
+
+      <link rel="stylesheet" href="externals/css/smoothness/jquery-ui-1.8.7.custom.css" />
+      <script type="text/javascript" src="externals/js/jquery-1.4.4.min.js">
+      </script>
+      <script type="text/javascript" src="externals/js/jquery-ui-1.8.7.custom.min.js">
+      </script>
+
+      <script type="text/javascript" src="scripts/deployment.js">
+      </script>
+      <link type="text/css" href="css/deployment.css" rel="stylesheet" media="all" />
+
+      ${select('*[local-name()!="title"]')}
+    </head>
+  </py:match>
+
+  <py:match path="body" once="true">
+    <body py:attrs="select('@*')">
+      <div id="header">
+        <a href="/">the BE community</a>
+      </div>
+      <div id="content">
+        ${select('*|text()')}
+      </div>
+    </body>
+  </py:match>
+</html>
