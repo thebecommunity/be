@@ -43,4 +43,4 @@ def render(*args, **kwargs):
         template = templates.templ
     ctxt = Context()
     ctxt.push(kwargs)
-    return template.generate(ctxt).render()
+    return template.generate(ctxt).render('html')
