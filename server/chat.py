@@ -69,5 +69,5 @@ def handle_log(environ, start_response):
 
     c.close()
 
-    result = template.render(msgs=msgs)
+    result = template.render(deployment=deployment,msgs=msgs)
     return [result]
