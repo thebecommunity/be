@@ -14,7 +14,7 @@ templates = threading.local()
 
 format = 'html'
 
-def output(filename, method='html', encoding='utf-8', **options):
+def output(filename, method='html', doctype=True, encoding='utf-8', **options):
     """Decorator for exposed methods to specify what template they should use
     for rendering, and which serialization method and options should be
     applied.
@@ -23,7 +23,7 @@ def output(filename, method='html', encoding='utf-8', **options):
         def wrapper(*args, **kwargs):
             templates.templ = loader.load(filename)
             opt = options.copy()
-            if method == 'html':
+            if doctype and method == 'html':
                 opt.setdefault('doctype', 'html')
             serializer = get_serializer(method, **opt)
             stream = func(*args, **kwargs)

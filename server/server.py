@@ -24,6 +24,7 @@ static_handlers = {
 
 dynamic_handlers = {
     re.compile('.*/profile/json') : profile.handle_profile_json,
+    re.compile('.*/profile/widget') : profile.handle_profile_widget,
     }
 
 def myapp(environ, start_response):
