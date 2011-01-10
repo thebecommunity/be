@@ -4,12 +4,15 @@ import threading
 from genshi.core import Stream
 from genshi.output import encode, get_serializer
 from genshi.template import Context, TemplateLoader
+from genshi.filters import HTMLFormFiller
 
 loader = TemplateLoader(
     os.path.join(os.path.dirname(__file__), 'templates'),
     auto_reload=True
 )
 templates = threading.local()
+
+format = 'html'
 
 def output(filename, method='html', encoding='utf-8', **options):
     """Decorator for exposed methods to specify what template they should use
@@ -31,7 +34,7 @@ def output(filename, method='html', encoding='utf-8', **options):
         return wrapper
     return decorate
 
-def render(*args, **kwargs):
+def generate(*args, **kwargs):
     """Function to render the given data to the template specified via the
     ``@output`` decorator.
     """
@@ -43,4 +46,10 @@ def render(*args, **kwargs):
         template = templates.templ
     ctxt = Context()
     ctxt.push(kwargs)
-    return template.generate(ctxt).render('html')
+    return template.generate(ctxt)
+
+def render(*args, **kwargs):
+    """Function to render the given data to the template specified via the
+    ``@output`` decorator.
+    """
+    return generate(*args, **kwargs).render(format)

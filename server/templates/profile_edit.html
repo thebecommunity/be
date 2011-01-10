@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+  <xi:include href="layout.html" />
+<head>
+  <title>Edit Profile</title>
+</head>
+<body>
+  <div>
+     <b>Edit Profile</b>
+  </div>
+  <br/>
+  <form method="POST" action="/profile/edit">
+    <table border="0">
+    <tr>
+      <td>Name</td>
+      <td><input type="text" name="name"></input></td>
+    </tr>
+    <tr>
+      <td>Age</td>
+      <td><input type="text" name="age"></input></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><input type="submit" name="submit" value="Update Profile"/></td>
+    </tr>
+    </table>
+  </form>
+</body>
+</html>

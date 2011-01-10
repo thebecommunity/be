@@ -16,9 +16,10 @@ static_handlers = {
     "/account/password" : auth.handle_passwd,
     "/account/add" : auth.handle_add,
     "/account/settings.js" : profile.handle_profile_settings_js,
+    "/profile/edit" : profile.handle_edit,
     "/viewer" : viewer.handle_viewer,
     "/chat/report" : chat.handle_report,
-    "/chat/log" : chat.handle_log,
+    "/chat/log" : chat.handle_log
     }
 
 dynamic_handlers = {
