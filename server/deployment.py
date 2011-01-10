@@ -33,3 +33,6 @@ Avatars = {
     }
 }
 DefaultAvatar = "Male"
+
+HelpLink = "http://github.com/sirikata/kataspace/issues"
+HelpText = "Report An Issue"

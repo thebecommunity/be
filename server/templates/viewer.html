@@ -62,11 +62,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <script type="text/javascript" src="externals/katajs/katajs.compiled.js">
         </script>
 
-        <script type="text/javascript" src="scripts/deployment.js">
-        </script>
         <script type="text/javascript">
           SpaceURL = ${deployment.SpaceURL};
           Title = "${deployment.title}";
+
+          FooterContent = function() {
+            var footer_div = $('<div></div>');
+            footer_div.appendTo(document.body);
+
+            $('<div><a href="${deployment.HelpLink}" target="_blank">${deployment.HelpText}</a></div>')
+              .button()
+              .addClass('footer-button')
+              .appendTo(footer_div);
+
+            return footer_div;
+          };
         </script>
         <link type="text/css" href="css/deployment.css" rel="stylesheet" media="all" />
 
