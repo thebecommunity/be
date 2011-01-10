@@ -95,6 +95,7 @@ def handle_edit(environ, start_response):
 
     user_id = auth.user(environ)
 
+    updated = False
     if environ['REQUEST_METHOD'] == 'POST':
         form = cgi.FieldStorage(fp=environ['wsgi.input'],
                                 environ=environ)
@@ -108,10 +109,11 @@ def handle_edit(environ, start_response):
             c.execute('update profiles set name = :name, age = :age where user_id = :id', new_vals)
             db.conn.commit()
             c.close()
+            updated = True
 
     # Try to get data for the form filler
     profile_info = lookup_profile(user_id)
     start_response('200 OK', [('Content-Type', 'text/html')])
-    result = template.generate(deployment=deployment) | template.HTMLFormFiller(data=profile_info)
+    result = template.generate(deployment=deployment,updated=updated) | template.HTMLFormFiller(data=profile_info)
     result = result.render(template.format)
     return [result]
