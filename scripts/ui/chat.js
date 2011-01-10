@@ -37,8 +37,11 @@ Kata.require([
 
     var SUPER = Kata.GUISimulation.prototype;
 
-    /** Manages a chat UI on a page. Supports multiple chat windows. */
-    ChatUI = function(channel, name, width) {
+    /** Manages a chat UI on a page. Supports multiple chat windows. A
+     * double-click on a user name triggers the info_handler callback
+     * with 1 parameter, the name of the user selected.
+     */
+    ChatUI = function(channel, name, width, info_handler) {
         SUPER.constructor.call(this, channel);
 
         this.mName = name;
@@ -52,6 +55,8 @@ Kata.require([
         // We might later support multiple chat windows. For now we're
         // just doing one large community chat, like IRC
         this.mSingle = true;
+
+        this.mInfoHandler = info_handler;
     };
     Kata.extend(ChatUI, SUPER);
 
@@ -68,6 +73,7 @@ Kata.require([
                                  offset : 200,
                                  width : this.mWidth,
                                  messageSent : this._getMessageSentHandler(),
+                                 buddyInfo : this._getBuddyInfoHandler(),
                                  boxClosed : this._getClosedHandler()
                                 });
         this.mChats.push(divIDstr);
@@ -112,6 +118,17 @@ Kata.require([
         };
     };
 
+    ChatUI.prototype._handleBuddyInfo = function(id) {
+        if (this.mInfoHandler)
+            this.mInfoHandler(id);
+    };
+    ChatUI.prototype._getBuddyInfoHandler = function() {
+        var self = this;
+        return function(id) {
+            self._handleBuddyInfo(id);
+        };
+    };
+
     ChatUI.prototype._handleClosed = function(id) {
         this.mChats = this.mChats.filter(
             function(el) { return el !== id; }
@@ -135,7 +152,12 @@ Kata.require([
 
         if (revt.action == 'enter') {
             var chatdiv = $("#"+this.mChats[0]); // FIXME only works for single mode
-            chatdiv.chatbox("option", "boxManager").addBuddy(revt.name);
+            $.getJSON(
+                '/' + revt.name + '/profile/json',
+                function(data) {
+                    chatdiv.chatbox("option", "boxManager").addBuddy(data.user, data.name);
+                }
+            );
         }
         else if (revt.action == 'say') {
             var chatdiv = $("#"+this.mChats[0]); // FIXME only works for single mode

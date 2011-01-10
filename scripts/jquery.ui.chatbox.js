@@ -6,9 +6,9 @@
  * Check out http://www.cs.illinois.edu/homes/wenpu1/chatbox.html for document
  *
  * Depends on jquery.ui.core, jquery.ui.widiget, jquery.ui.effect
- * 
+ *
  * Also uses some styles for jquery.ui.dialog
- * 
+ *
  */
 
 
@@ -28,6 +28,7 @@
 		// override this
 		this.boxManager.addMsg(user.first_name, msg);
 	    },
+            buddyInfo: function(id) {}, // called on buddy double click
 	    boxClosed: function(id) {}, // called when the close icon is clicked
 	    boxManager: {
 		// thanks to the widget factory facility
@@ -53,16 +54,21 @@
                         document.title = '(' + num_outstanding + ') - ' + orig_title;
 		    }
 		},
-                addBuddy: function(name) {
+                addBuddy: function(id, name) {
+                    var self = this;
                     if (!this.buddies) this.buddies = {};
 
                     var buddy = $('<li>' + name + '</li>')
                         .appendTo(this.elem.uiChatboxBuddyListList)
-                        .addClass('ui-widget-content ui-chatbox-buddy');
-                    this.buddies[name] = buddy;
+                        .addClass('ui-widget-content ui-chatbox-buddy')
+		        .dblclick(function(event) {
+		                      self.elem.options.buddyInfo(id);
+		                      return false;
+		                  });
+                    this.buddies[id] = buddy;
                 },
-                removeBuddy: function(name) {
-                    var buddy = this.buddies[name];
+                removeBuddy: function(id) {
+                    var buddy = this.buddies[id];
                     if (!buddy) return;
                     buddy.hide(
                         'highlight', {}, 1000,

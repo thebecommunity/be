@@ -30,6 +30,7 @@ def lookup_profile(name):
         avatar_name = ''
 
     return {
+        'user' : auth.username(name),
         'name' : result[0],
         'age' : result[1],
         'avatar_name' : avatar_name,

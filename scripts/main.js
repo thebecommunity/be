@@ -10,6 +10,7 @@ var Location = window.location.href.substr(0,
                    window.location.href.lastIndexOf('/')+1);
 var StaticResources = Location + "static/";
 
+var UserName = UserSettings['user'];
 var loginName = UserSettings['name'];
 var avatarURL = StaticResources + UserSettings['avatar']['url'];
 var avatarScale = UserSettings['avatar']['scale'];
@@ -53,6 +54,7 @@ function onDocReady() {
                      kata_base_offset + 'scripts/ui/session.js',
                      kata_base_offset + 'scripts/ui/toolbar.js',
                      kata_base_offset + 'scripts/ui/sit.js',
+                     kata_base_offset + 'scripts/ui/profile_viewer.js',
                      kata_base_offset + 'scripts/ui/help.js'
                  ], function() {
                      antiScroll();
@@ -78,7 +80,7 @@ function loadGFX(){
             "Example.BlessedScript",
             {
                 space: SpaceURL,
-                name: loginName,
+                name: UserName,
                 scale : avatarScale,
                 visual: {mesh: avatarURL}
             });
@@ -86,7 +88,8 @@ function loadGFX(){
         session = new SessionUI(window.kata.getChannel());
         situi = new SitUI(window.kata.getChannel(), toolbar);
         helpui = new HelpUI(window.kata.getChannel(), toolbar);
-        chats = new ChatUI(window.kata.getChannel(), loginName, 300);
+        profile_viewer = new ProfileViewerUI();
+        chats = new ChatUI(window.kata.getChannel(), loginName, 300, profile_viewer.getHandler());
         chats.create("Chat");
     }
 
