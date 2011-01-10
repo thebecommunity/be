@@ -12,6 +12,7 @@ def lookup_profile(name):
     # Login should be unique
     results = c.fetchall()
     if len(results) != 1:
+        print "Error:", len(results), "should be exactly one profile result. User", name
         c.close()
         return None
     (result,) = results
@@ -20,7 +21,11 @@ def lookup_profile(name):
 
     return {
         'name' : result[0],
-        'age' : result[1]
+        'age' : result[1],
+        'avatar' : {
+            'url' : "static/femaleWalkIdleSit.dae",
+            'scale' : 1.0
+            }
         }
 
 def name(user_id):
@@ -39,14 +44,19 @@ def name(user_id):
 
     return results[0]
 
+def _extract_url_username(environ):
+    # Extract the name from the url, e.g. /user/xyz/abc
+    user = environ['PATH_INFO']
+    user = user.replace('/', '', 1)
+    user = user.replace('/profile/json', '', 1)
+
+    return user
+
 def handle_profile_json(environ, start_response):
     if not auth.check_auth(environ, start_response):
         return []
 
-    # Extract the name from the url. /user/profile/json
-    user = environ['PATH_INFO']
-    user = user.replace('/', '', 1)
-    user = user.replace('/profile/json', '', 1)
+    user = _extract_url_username(environ)
 
     user_id = auth.lookup_userid(user)
     profile_info = lookup_profile(user_id)
@@ -57,3 +67,18 @@ def handle_profile_json(environ, start_response):
 
     start_response('200 OK', [('Content-Type', 'application/json')])
     return [ json.dumps(profile_info) ]
+
+
+def handle_profile_settings_js(environ, start_response):
+    if not auth.check_auth(environ, start_response):
+        return []
+
+    user_id = auth.user(environ)
+    profile_info = lookup_profile(user_id)
+
+    if profile_info == None:
+        start_response('404 Not Found', [('Content-Type', 'text/javascript')])
+        return []
+
+    start_response('200 OK', [('Content-Type', 'text/javascript')])
+    return [ "UserSettings = ", json.dumps(profile_info) ]

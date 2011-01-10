@@ -93,6 +93,23 @@ def lookup_userid(name):
 
     return result
 
+def username(user_id):
+    """Look up a username based on the user id."""
+    c = db.conn.cursor()
+    c.execute( 'select login from users where user_id = :id', { 'id' : user_id } )
+
+    # Login should be unique
+    results = c.fetchall()
+    if len(results) != 1:
+        c.close()
+        return None
+    (result,) = results
+    result = result[0]
+
+    c.close()
+
+    return result
+
 def is_admin(user_id):
     """Look up if a user id has admin privileges."""
     c = db.conn.cursor()

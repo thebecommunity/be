@@ -5,16 +5,40 @@ var kata_base_offset = "../../";
 
 var kata, graphics;
 var driver = "GLGE";
-var loginName = null;
-var avatarURL = null;
-var avatarScale = null;
 
-function handleLogin(name, avatar) {
-    loginName = name;
-    avatarURL = avatar.url;
-    avatarScale = avatar.scale;
-    
+var dirname = window.location.href.substr(0,
+                   window.location.href.lastIndexOf('/')+1);
+
+var loginName = UserSettings['name'];
+var avatarURL = dirname + UserSettings['avatar']['url'];
+var avatarScale = UserSettings['avatar']['scale'];
+
+function onDocReady() {
+    $('#container').hide();
+
+    var have_deps = true;
+    if (!Modernizr.webgl) {
+        $.jnotify("Your browser doesn't support WebGL.", 'error', true);
+        have_deps = false;
+    }
+    if (!Modernizr.websockets) {
+        $.jnotify("Your browser doesn't support WebSockets.", 'error', true);
+        have_deps = false;
+    }
+    if (!Modernizr.webworkers) {
+        $.jnotify("Your browser doesn't support WebWorkers.", 'error', true);
+        have_deps = false;
+    }
+
+    if (!have_deps) {
+        $.jnotify("Currently we recommend the latest <a href=\"http://www.google.com/landing/chrome/beta/\">Chrome Beta</a> for all platforms.<br>In recent Firefox Betas you may need to explicitly enable these features via the about:config page.", 'error', true);
+        return;
+    }
+
     Kata.require([
+                    // Pre login
+                     kata_base_offset + 'scripts/ui/antiscroll.js',
+                     kata_base_offset + 'scripts/ui/footer.js',
                     // Post login
                      'katajs/oh/MainThread.js',
                      'katajs/space/loop/Space.js',
@@ -30,54 +54,23 @@ function handleLogin(name, avatar) {
                      kata_base_offset + 'scripts/ui/sit.js',
                      kata_base_offset + 'scripts/ui/help.js'
                  ], function() {
-                     loadGFX();
-                 });
-}
-
-function onDocReady() {
-    $('#container').hide();
-    
-    var have_deps = true;
-    if (!Modernizr.webgl) {
-        $.jnotify("Your browser doesn't support WebGL.", 'error', true);
-        have_deps = false;
-    }
-    if (!Modernizr.websockets) {
-        $.jnotify("Your browser doesn't support WebSockets.", 'error', true);
-        have_deps = false;
-    }
-    if (!Modernizr.webworkers) {
-        $.jnotify("Your browser doesn't support WebWorkers.", 'error', true);
-        have_deps = false;
-    }
-    
-    if (!have_deps) {
-        $.jnotify("Currently we recommend the latest <a href=\"http://www.google.com/landing/chrome/beta/\">Chrome Beta</a> for all platforms.<br>In recent Firefox Betas you may need to explicitly enable these features via the about:config page.", 'error', true);
-        return;
-    }
-    
-    Kata.require([
-                    // Pre login
-                     kata_base_offset + 'scripts/ui/antiscroll.js',
-                     kata_base_offset + 'scripts/ui/login.js',
-                     kata_base_offset + 'scripts/ui/footer.js'
-                 ], function() {
                      antiScroll();
-                     loginui = new LoginUI( $("#login"), Avatars, handleLogin);
-                     
+
                      $('#title').append(Title);
-                     
+
                      footerui = new FooterUI(
                          $(FooterContent())
                      );
+
+                     loadGFX();
                  });
 }
 
 function loadGFX(){
     $('#container').show();
-    
+
     toolbar = new ToolbarUI($('#container'));
-    
+
     function graphicsReady () {
         window.kata = new Kata.MainThread(
             kata_base_offset + "scripts/BlessedScript.js",
@@ -95,7 +88,7 @@ function loadGFX(){
         chats = new ChatUI(window.kata.getChannel(), loginName, 300);
         chats.create("Chat");
     }
-    
+
     Kata.GraphicsSimulation.initializeDriver(driver, "static/glge_level.xml", graphicsReady);
 }
 

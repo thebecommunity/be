@@ -15,13 +15,14 @@ static_handlers = {
     "/account/logout" : auth.handle_logout,
     "/account/password" : auth.handle_passwd,
     "/account/add" : auth.handle_add,
+    "/account/settings.js" : profile.handle_profile_settings_js,
     "/viewer" : viewer.handle_viewer,
     "/chat/report" : chat.handle_report,
     "/chat/log" : chat.handle_log,
     }
 
 dynamic_handlers = {
-    re.compile('.*/profile/json') : profile.handle_profile_json
+    re.compile('.*/profile/json') : profile.handle_profile_json,
     }
 
 def myapp(environ, start_response):

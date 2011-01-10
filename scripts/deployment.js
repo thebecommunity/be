@@ -3,12 +3,6 @@
  *  run on different servers is isolated to this file.
  */
 
-// Replace to override the default of using the sirikata protocol on
-// the same host on Sirikata's default port of 7777
-SpaceURL = "sirikata://" + window.location.hostname + ":7777";
-
-Title = "KataSpace";
-
 (function(){
 var dirname = window.location.href.substr(0,
                   window.location.href.lastIndexOf('/')+1);

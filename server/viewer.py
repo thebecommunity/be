@@ -2,15 +2,13 @@
 
 import deployment
 import template
+import auth
 
 @template.output('viewer.html')
 def handle_viewer(environ, start_response):
-    # Always generate a normal page
+    if not auth.check_auth(environ, start_response):
+        return []
+
     start_response('200 OK', [('Content-Type', 'text/html')])
-
-    # If we're already authorized, ignore
-    #if authorized(environ):
-    #    return []
-
     result = template.render(deployment=deployment)
     return [result]

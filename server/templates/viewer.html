@@ -64,13 +64,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         <script type="text/javascript" src="scripts/deployment.js">
         </script>
+        <script type="text/javascript">
+          SpaceURL = ${deployment.SpaceURL};
+          Title = "${deployment.title}";
+        </script>
         <link type="text/css" href="css/deployment.css" rel="stylesheet" media="all" />
+
+        <script type="text/javascript" src="/account/settings.js">
+        </script>
 
         <script type="text/javascript" src="scripts/main.js">
         </script>
     </head>
     <body>
-        <div id="login" title="Login"></div>
         <div class=".container-fullscreen" id="main">
             <div id="title" class="ui-widget" style="width:900px;margin:auto;padding:15px;font-size:150%">
             </div>
