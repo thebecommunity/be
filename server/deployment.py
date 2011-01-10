@@ -15,3 +15,21 @@ title = "the BE community"
 # the same host on Sirikata's default port of 7777. Note that this is
 # a javascript string
 SpaceURL = '"sirikata://" + window.location.hostname + ":7777"'
+
+Avatars = {
+    "Male" :
+    {
+        'name' : "Male",
+        'url' : "maleWalkIdleSit.dae",
+        'scale' : 1.0,
+        'preview' : "maleheadshot.png"
+    },
+    "Female" :
+    {
+        'name' : "Female",
+        'url' : "femaleWalkIdleSit.dae",
+        'scale' : 1.0,
+        'preview' : "femaleheadshot.png"
+    }
+}
+DefaultAvatar = "Male"

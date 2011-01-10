@@ -6,11 +6,12 @@ var kata_base_offset = "../../";
 var kata, graphics;
 var driver = "GLGE";
 
-var dirname = window.location.href.substr(0,
+var Location = window.location.href.substr(0,
                    window.location.href.lastIndexOf('/')+1);
+var StaticResources = Location + "static/";
 
 var loginName = UserSettings['name'];
-var avatarURL = dirname + UserSettings['avatar']['url'];
+var avatarURL = StaticResources + UserSettings['avatar']['url'];
 var avatarScale = UserSettings['avatar']['scale'];
 
 function onDocReady() {

@@ -21,7 +21,7 @@ while argi < len(sys.argv):
     arg = sys.argv[argi]
     if arg == 'init':
         conn.execute('create table if not exists users (user_id integer primary key, login text unique, password text, admin integer)')
-        conn.execute('create table if not exists profiles (user_id integer primary key, name text, age integer)')
+        conn.execute('create table if not exists profiles (user_id integer primary key, name text, age integer, avatar text)')
         conn.execute('create table if not exists chat (user_id integer, time integer, msg text)')
         argi += 1
     elif arg == 'adduser':

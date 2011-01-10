@@ -10,7 +10,7 @@ import cgi
 def lookup_profile(name):
     """Look up a user profile. Returns it as a set of key-value pairs."""
     c = db.conn.cursor()
-    c.execute( 'select name,age from profiles where user_id = :id', { 'id' : name } )
+    c.execute( 'select name,age,avatar from profiles where user_id = :id', { 'id' : name } )
 
     # Login should be unique
     results = c.fetchall()
@@ -22,13 +22,18 @@ def lookup_profile(name):
 
     c.close()
 
+    avatar = deployment.Avatars[deployment.DefaultAvatar]
+    avatar_name = result[2]
+    if avatar_name in deployment.Avatars:
+        avatar = deployment.Avatars[avatar_name]
+    else:
+        avatar_name = ''
+
     return {
         'name' : result[0],
         'age' : result[1],
-        'avatar' : {
-            'url' : "static/femaleWalkIdleSit.dae",
-            'scale' : 1.0
-            }
+        'avatar_name' : avatar_name,
+        'avatar' : avatar
         }
 
 def name(user_id):
@@ -104,9 +109,10 @@ def handle_edit(environ, start_response):
                 'id' : user_id,
                 'name' : form['name'].value,
                 'age' : form['age'].value,
+                'avatar' : form['avatar_name'].value,
                 }
             c = db.conn.cursor()
-            c.execute('update profiles set name = :name, age = :age where user_id = :id', new_vals)
+            c.execute('update profiles set name = :name, age = :age, avatar = :avatar where user_id = :id', new_vals)
             db.conn.commit()
             c.close()
             updated = True
