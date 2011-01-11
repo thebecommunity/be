@@ -7,6 +7,18 @@ import template
 import deployment
 import cgi
 
+def create_blank(userid, username):
+    c = db.conn.cursor()
+    vals = {
+        'id' : userid,
+        'name' : username,
+        'age' : 0,
+        'avatar' : ''
+        }
+    c.execute('insert into profiles(user_id,name,age,avatar) values(:id,:name,:age,:avatar)', vals)
+    c.close()
+    db.conn.commit()
+
 def lookup_profile(name):
     """Look up a user profile. Returns it as a set of key-value pairs."""
     c = db.conn.cursor()

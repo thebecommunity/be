@@ -22,6 +22,7 @@ import urllib
 import db
 import template
 import cgi
+import profile
 
 def hash_user_credential(cleartext_password):
     digest = sha1(cleartext_password).hexdigest()
@@ -228,6 +229,10 @@ def handle_add(environ, start_response):
             c.execute('insert into users(login, password, admin) values(:login, :password, 0)', vals)
             db.conn.commit()
             c.close()
+
+            # Extract the new user id and setup a blank profile
+            new_userid = lookup_userid(new_username)
+            profile.create_blank(new_userid, new_username)
 
     start_response('200 OK', [('Content-Type', 'text/html')])
     result = template.render(deployment=deployment, username=new_username, password=new_passwd)
