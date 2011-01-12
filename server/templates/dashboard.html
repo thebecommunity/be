@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+  <xi:include href="layout.html" />
+<head>
+  <title>Templates</title>
+</head>
+<body>
+  <div>
+    <b>${name}'s Dashboard</b>
+  </div>
+  <div>
+    <div>
+      <h4>Account &amp; Profile</h4>
+      <a href="/profile/edit">Edit Profile</a><br />
+      <a href="/account/password">Change Password</a><br />
+      <a href="/account/logout">Logout</a><br />
+
+      <h4>Viewer</h4>
+      <a href="/viewer">Launch Viewer</a><br />
+
+      <py:if test="admin">
+      <h4>Administration</h4>
+      <a href="/account/add">Add New User</a><br />
+      <a href="/chat/log">View Chat Log</a><br />
+      </py:if>
+
+    </div>
+  </div>
+</body>
+</html>

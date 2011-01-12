@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import notfound
+import dashboard
 import auth
 import profile
 import viewer
@@ -10,6 +11,7 @@ import re
 
 static_handlers = {
     "/404" : notfound.handle_404,
+    "/" : dashboard.handle_dashboard,
     "/account/login" : auth.handle_login,
     "/account/dologin" : auth.handle_login,
     "/account/logout" : auth.handle_logout,

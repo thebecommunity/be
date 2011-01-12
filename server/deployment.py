@@ -11,6 +11,11 @@ cookie_secret = 'secret'
 # Deployment name
 title = "the BE community"
 
+# Page to use as landing page, and redirect to when they aren't logged
+# in. Defaults to the login page provided by the app, but could also
+# be directed at another site that has a compatible login form
+LandingPage = "/account/login"
+
 # Replace to override the default of using the sirikata protocol on
 # the same host on Sirikata's default port of 7777. Note that this is
 # a javascript string
