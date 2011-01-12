@@ -75,12 +75,20 @@ def user(environ):
     """Returns the user identity for the current user."""
     return environ['repoze.who.identity']['repoze.who.userid']
 
-def check_auth(environ, start_response):
-    """Checks if the user is logged in. Generates 401 and returns
-    False if not authorized. Returns True if authorized."""
+def _handle_auth_failure(environ, start_response, redirect):
+    if redirect:
+        start_response('303 See Other', [('Content-Type', 'text/plain'), ('Location', redirect)])
+    else:
+        request_auth(environ)
+        start_response('401 Unauthorized', [('Content-Type', 'text/plain')])
+
+def check_auth(environ, start_response, redirect=None):
+    """Checks if the user is logged in. Redirects them to the
+    specified page and returns false if not authorized. Returns True
+    if authorized."""
 
     if not authorized(environ):
-        start_response('401 Unauthorized', [('Content-Type', 'text/plain')])
+        _handle_auth_failure(environ, start_response, redirect)
         return False
 
     return True
@@ -136,51 +144,49 @@ def is_admin(user_id):
 
     return (result != 0)
 
-def check_admin(environ, start_response):
-    """Checks if the user is logged in and an admin. Generates 401 and returns
-    False if not authorized. Returns True if authorized."""
+def check_admin(environ, start_response, redirect=None):
+    """Checks if the user is logged in and an admin. Redirects them to the
+    specified page and returns false if not authorized. Returns True
+    if authorized."""
 
-    if not authorized(environ):
-        start_response('401 Unauthorized', [('Content-Type', 'text/plain')])
+    if not check_auth(environ, start_response, redirect):
         return False
 
     user_id = user(environ)
     if not is_admin(user_id):
-        start_response('401 Unauthorized', [('Content-Type', 'text/plain')])
+        _handle_auth_failure(environ, start_response, redirect)
         return False
 
     return True
 
 @template.output('login.html')
 def handle_login(environ, start_response):
-    # Always generate a normal page
-    start_response('200 OK', [('Content-Type', 'text/html')])
-
-    # If we're already authorized, ignore
+    # If we're already authorized, put us back at the landing page
     if authorized(environ):
+        start_response('303 See Other', [('Content-Type', 'text/plain'), ('Location', deployment.LandingPage)])
         return []
 
     # Otherwise, generate the form
-    came_from = None
+    came_from = deployment.LandingPage
     if environ['QUERY_STRING'].startswith('came_from='):
         came_from = environ['QUERY_STRING'].replace('came_from=', '', 1)
         came_from = urllib.unquote(came_from)
 
+    start_response('200 OK', [('Content-Type', 'text/html')])
     result = template.render(deployment=deployment, came_from=came_from)
-
     return [result]
 
 def handle_logout(environ, start_response):
     request_auth(environ)
     # With no other obvious course of action, just redirect to the
     # dashboard, which will trigger the normal login procedure again
-    start_response('303 See Other', [('Content-Type', 'text/plain'), ('Location', '/')])
+    start_response('303 See Other', [('Content-Type', 'text/plain'), ('Location', deployment.LandingPage)])
     return []
 
 @template.output('passwd.html')
 def handle_passwd(environ, start_response):
     # If we're already authorized, ignore
-    if not check_auth(environ, start_response):
+    if not check_auth(environ, start_response, redirect=deployment.LandingPage):
         return []
 
     if environ['REQUEST_METHOD'] == 'POST':

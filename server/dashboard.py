@@ -8,8 +8,7 @@ import profile
 @template.output('dashboard.html')
 def handle_dashboard(environ, start_response):
     # Redirect to landing page if they aren't authorized
-    if not auth.authorized(environ):
-        start_response('303 See Other', [('Content-Type', 'text/plain'), ('Location', deployment.LandingPage)])
+    if not auth.check_auth(environ, start_response):
         return []
 
     user_id = auth.user(environ)
