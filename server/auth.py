@@ -11,7 +11,6 @@ from repoze.who.plugins.form import RedirectingFormPlugin
 from repoze.who.plugins.sql import SQLAuthenticatorPlugin
 from repoze.who.middleware import PluggableAuthenticationMiddleware
 from repoze.who.classifiers import default_request_classifier
-from repoze.who.classifiers import default_challenge_decider
 
 try:
     from hashlib import sha1
@@ -32,6 +31,15 @@ def validate_user_credential(cleartext_password, stored_password_hash):
     """Validates that the provided and hashed passwords match."""
     digest = hash_user_credential(cleartext_password)
     return (stored_password_hash == digest)
+
+def request_auth(environ):
+    """Adds a flag that triggers an auth request without requiring a 401 response."""
+    environ['be.auth.challenge'] = True
+
+def _challenge_decider(environ, status, headers):
+    if status.startswith('401 ') or 'be.auth.challenge' in environ:
+        return True
+    return False
 
 def create_auth_middleware(app):
     sqlpasswd = SQLAuthenticatorPlugin(
@@ -54,7 +62,7 @@ def create_auth_middleware(app):
         challengers,
         mdproviders,
         default_request_classifier,
-        default_challenge_decider
+        _challenge_decider
         )
 
     return middleware
@@ -163,8 +171,10 @@ def handle_login(environ, start_response):
     return [result]
 
 def handle_logout(environ, start_response):
-    # Returning 401 triggers the cookie removal
-    start_response('401 Unauthorized', [('Content-Type', 'text/plain')])
+    request_auth(environ)
+    # With no other obvious course of action, just redirect to the
+    # dashboard, which will trigger the normal login procedure again
+    start_response('303 See Other', [('Content-Type', 'text/plain'), ('Location', '/')])
     return []
 
 @template.output('passwd.html')
