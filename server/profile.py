@@ -6,6 +6,7 @@ import json
 import template
 import deployment
 import cgi
+import sanitize
 
 def create_blank(userid, username):
     c = db.conn.cursor()
@@ -132,25 +133,32 @@ def handle_edit(environ, start_response):
     user_id = auth.user(environ)
 
     updated = False
+    failed_update = False
     if environ['REQUEST_METHOD'] == 'POST':
         form = cgi.FieldStorage(fp=environ['wsgi.input'],
                                 environ=environ)
         if 'name' in form and 'age' in form:
-            new_vals = {
-                'id' : user_id,
-                'name' : form['name'].value,
-                'age' : form['age'].value,
-                'avatar' : form['avatar_name'].value,
-                }
-            c = db.conn.cursor()
-            c.execute('update profiles set name = :name, age = :age, avatar = :avatar where user_id = :id', new_vals)
-            db.conn.commit()
-            c.close()
-            updated = True
+            try:
+                new_name = sanitize.text(form['name'].value)
+                new_age = sanitize.integer(form['age'].value)
+                new_avatar = sanitize.text(form['avatar_name'].value)
+                new_vals = {
+                    'id' : user_id,
+                    'name' : new_name,
+                    'age' : new_age,
+                    'avatar' : new_avatar,
+                    }
+                c = db.conn.cursor()
+                c.execute('update profiles set name = :name, age = :age, avatar = :avatar where user_id = :id', new_vals)
+                db.conn.commit()
+                c.close()
+                updated = True
+            except:
+                failed_update = True
 
     # Try to get data for the form filler
     profile_info = lookup_profile(user_id)
     start_response('200 OK', [('Content-Type', 'text/html')])
-    result = template.generate(deployment=deployment,updated=updated) | template.HTMLFormFiller(data=profile_info)
+    result = template.generate(deployment=deployment,updated=updated,failed_update=failed_update) | template.HTMLFormFiller(data=profile_info)
     result = result.render(template.format)
     return [result]

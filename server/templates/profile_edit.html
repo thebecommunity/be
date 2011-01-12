@@ -12,6 +12,7 @@
   </div>
   <br/>
   <p py:if="updated">Profile Updated Successfully.</p>
+  <p py:if="failed_update">Invalid values. Profile not updated.</p>
   <form method="POST" action="/profile/edit">
     <table border="0">
     <tr>
