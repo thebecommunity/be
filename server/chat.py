@@ -8,6 +8,7 @@ import profile
 
 import time
 import cgi
+import sanitize
 
 def handle_report(environ, start_response):
     """Handles reporting of a chat message from a user."""
@@ -20,7 +21,7 @@ def handle_report(environ, start_response):
     form = cgi.FieldStorage(fp=environ['wsgi.input'],
                             environ=environ)
     if 'msg' in form:
-        msg = form['msg'].value
+        msg = sanitize.html(form['msg'].value)
     else:
         msg = ''
 

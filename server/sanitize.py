@@ -8,6 +8,9 @@ class TextSanitizer(HTMLSanitizer):
     def __init__(self):
         HTMLSanitizer.__init__(self, safe_tags=set(), safe_attrs=set(), safe_schemes=set(), uri_attrs=set())
 
+def html(data):
+    return str(HTML(data) | HTMLSanitizer())
+
 def text(data):
     return str(HTML(data) | TextSanitizer())
 
