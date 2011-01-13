@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+  <xi:include href="layout.html" />
+<head>
+  <title>Set Administrative Users</title>
+</head>
+<body>
+  <div>
+     <b>Set Admins</b>
+  </div>
+
+  <div>
+    These users are currently admins:
+    <ol>
+      <li py:for="admin in admins">${admin}</li>
+    </ol>
+  </div>
+
+  <div>
+    These users are not currently admins:
+    <form method="POST" action="/account/admin">
+      <select name="username">
+        <option py:for="not_admin in not_admins">${not_admin}</option>
+      </select>
+      <td><input type="submit" name="submit" value="Make User Admin"/></td>
+    </form>
+  </div>
+
+</body>
+</html>

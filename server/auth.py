@@ -253,3 +253,47 @@ def handle_add(environ, start_response):
     start_response('200 OK', [('Content-Type', 'text/html')])
     result = template.render(deployment=deployment, username=new_username, password=new_passwd)
     return [result]
+
+
+def get_users_with_admin(admin_is=True):
+    if admin_is:
+        admin_val = 1
+    else:
+        admin_val = 0
+
+    c = db.conn.cursor()
+    c.execute('select login from users where admin = %d' % (admin_val))
+
+    results = c.fetchall()
+    results = [r[0] for r in results]
+
+    c.close()
+    return results
+
+@template.output('set_admin.html')
+def handle_set_admin(environ, start_response):
+    # If we're already authorized, ignore
+    if not check_admin(environ, start_response):
+        return []
+
+    if environ['REQUEST_METHOD'] == 'POST':
+        form = cgi.FieldStorage(fp=environ['wsgi.input'],
+                                environ=environ)
+        if 'username' in form:
+            username = form['username'].value
+
+            c = db.conn.cursor()
+            vals = {
+                'username' : username
+                }
+            c.execute('update users set admin = 1 where login = :username', vals)
+            db.conn.commit()
+            c.close()
+
+    # Get lists for both admins and non-admins
+    admins = get_users_with_admin(True)
+    not_admins = get_users_with_admin(False)
+
+    start_response('200 OK', [('Content-Type', 'text/html')])
+    result = template.render(deployment=deployment, admins=admins, not_admins=not_admins)
+    return [result]
