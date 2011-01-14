@@ -282,11 +282,16 @@ def handle_set_admin(environ, start_response):
         if 'username' in form:
             username = form['username'].value
 
+            admin_setting = 1
+            if 'revoke' in form:
+                admin_setting = 0
+
             c = db.conn.cursor()
             vals = {
-                'username' : username
+                'username' : username,
+                'admin' : admin_setting
                 }
-            c.execute('update users set admin = 1 where login = :username', vals)
+            c.execute('update users set admin = :admin where login = :username', vals)
             db.conn.commit()
             c.close()
 
