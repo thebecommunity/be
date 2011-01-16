@@ -52,3 +52,8 @@ git clone git://github.com/sirikata/kataspace.git kataspace.git && \
 cd kataspace.git && \
 make || \
 bail "Couldn't build kataspace."
+
+# Create database, adding user 'admin' with password 'admin'. Be sure to change this!
+cd ${DIR} && \
+cd kataspace.git && \
+./contrib/db.py init admin admin admin
