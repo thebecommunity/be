@@ -97,7 +97,7 @@ Kata.require([
     ChatUI.prototype._handleMessageSent = function(id, user, msg) {
         // Update the box
         var chatdiv = $("#"+this.mChats[0]); // FIXME only works for single mode
-        var display_msg = URL.convertURLsToLinks(msg, true);
+        var display_msg = URL.convertURLsToLinks(msg, true, 'chat-link');
         chatdiv.chatbox("option", "boxManager").addMsg(this.mName, display_msg);
         // Send the message
         this.mChannel.sendMessage(
@@ -161,7 +161,7 @@ Kata.require([
         }
         else if (revt.action == 'say') {
             var chatdiv = $("#"+this.mChats[0]); // FIXME only works for single mode
-            var display_msg = URL.convertURLsToLinks(revt.msg, true);
+            var display_msg = URL.convertURLsToLinks(revt.msg, true, 'chat-link');
             chatdiv.chatbox("option", "boxManager").addMsg(revt.name, display_msg);
         }
         else if (revt.action == 'exit') {

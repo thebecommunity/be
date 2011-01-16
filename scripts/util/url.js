@@ -27,10 +27,13 @@ URL.normalize = function(str) {
 /** Tries to detect links embedded in the given string and replace them with
   * links.
   */
-URL.convertURLsToLinks = function(str, newtab) {
+URL.convertURLsToLinks = function(str, newtab, klass) {
     var newtab_str = '';
     if (newtab)
         newtab_str = ' target="_blank"';
+    var klass_str = '';
+    if (klass)
+        klass_str = ' class="' + klass + '"';
 
     // Get parts of string to test
     var parts = str.split(' ');
@@ -43,6 +46,6 @@ URL.convertURLsToLinks = function(str, newtab) {
             to_replace[parts[i]] = parts[i];
     // Now, run through and do replacements
     for(var rep in to_replace)
-        str = str.replace(rep, '<a href="' + URL.normalize(rep) + '"' + newtab_str + '>' + rep + '</a>');
+        str = str.replace(rep, '<a href="' + URL.normalize(rep) + '"' + newtab_str + klass_str + '>' + rep + '</a>');
     return str;
 };

@@ -22,11 +22,15 @@
 
   <py:match path="body" once="true">
     <body py:attrs="select('@*')">
-      <div id="header">
-        <a href="/">the BE community</a>
-      </div>
-      <div id="content">
-        ${select('*|text()')}
+      <div id="whole">
+        <div id="header">
+          <div id="title" class="ui-widget">
+            <a href="/" class="title-link">the BE community</a>
+          </div>
+        </div>
+        <div id="content">
+          ${select('*|text()')}
+        </div>
       </div>
     </body>
   </py:match>

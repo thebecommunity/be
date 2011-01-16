@@ -4,30 +4,32 @@
       xmlns:py="http://genshi.edgewall.org/">
   <xi:include href="layout.html" />
 <head>
-  <title>Templates</title>
+  <title>Dashboard</title>
 </head>
 <body>
-  <div>
-    <b>${name}'s Dashboard</b>
-  </div>
-  <div>
-    <div>
-      <h4>Account &amp; Profile</h4>
+  <div class="page-title">${name}'s Dashboard</div>
+  <div class="left-indent">
+    <h4>Account &amp; Profile</h4>
+    <div class="left-indent">
       <a href="/profile/edit">Edit Profile</a><br />
       <a href="/account/password">Change Password</a><br />
       <a href="/account/logout">Logout</a><br />
-
-      <h4>Viewer</h4>
-      <a href="/viewer">Launch Viewer</a><br />
-
-      <py:if test="admin">
-      <h4>Administration</h4>
-      <a href="/account/add">Add New User</a><br />
-      <a href="/chat/log">View Chat Log</a><br />
-      <a href="/account/admin">Set Admin Users</a><br />
-      </py:if>
-
     </div>
+    
+    <h4>Viewer</h4>
+    <div class="left-indent">
+      <a href="/viewer">Launch Viewer</a><br />
+    </div>
+
+    <py:if test="admin">
+      <h4>Administration</h4>
+      <div class="left-indent">
+        <a href="/account/add">Add New User</a><br />
+        <a href="/chat/log">View Chat Log</a><br />
+        <a href="/account/admin">Set Admin Users</a><br />
+      </div>
+    </py:if>
+
   </div>
 </body>
 </html>

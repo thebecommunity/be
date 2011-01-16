@@ -9,9 +9,7 @@
 <body>
 <py:choose test="len(username)">
 <py:when test="0">
-  <div>
-     <b>Add User</b>
-  </div>
+  <div class="page-title">Add User</div>
   <br/>
   <form method="POST" action="/account/add">
     <table border="0">
@@ -27,9 +25,7 @@
   </form>
 </py:when>
 <py:otherwise>
-  <div>
-    <b>User Added</b>
-  </div>
+  <div class="page-title">User Added</div>
   <div>
     User: ${username}<br />
     Password: ${password}<br />

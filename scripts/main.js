@@ -59,8 +59,6 @@ function onDocReady() {
                  ], function() {
                      antiScroll();
 
-                     $('#title').append(Title);
-
                      footerui = new FooterUI(
                          $(FooterContent())
                      );

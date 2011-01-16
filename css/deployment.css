@@ -6,11 +6,64 @@ html {
 body {
     background-color: #fff;
     color: #fff;
-    font-family:arial;
+    font-family: arial;
     background: -webkit-gradient(linear, left top, left bottom, from(#666), to(#222));
     background: -moz-linear-gradient(top,  #666,  #222);
-    padding-top: 0px;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
 }
+
+a:link { color:#FFFFFF; }
+a:visited { color:#FFFFFF; }
+a:hover { color:#FFFFFF; }
+a:active { color:#FFFFFF; }
+
+a.title-link { text-decoration: none; }
+a.chat-link { color: #000000; }
+
+#whole {
+    width: 100%;
+    display: block;
+    float: none;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+}
+
+#header {
+    background-color:#aaa;
+}
+
+#title {
+    max-width: 1000px;
+    margin: auto;
+    padding: 15px;
+    font-size: 175%;
+    font-weight: bolder;
+}
+
+#content {
+    max-width: 1000px;
+    margin: auto;
+    padding: 1em;
+}
+
+
+.page-title {
+    font-size: 125%;
+    font-weight: bolder;
+}
+
+.left-indent {
+    margin-left: 20px;
+}
+
+.chat-log {
+    list-style-type: none;
+}
+
+/* The remainder of the rules are for the viewer page only. */
 
 .container-fullscreen {
     position: absolute;
