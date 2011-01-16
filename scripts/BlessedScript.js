@@ -25,7 +25,9 @@ Kata.require([
         loc.pos = [xoff, this._scale * 1.0, zoff];
         loc.scale = [args.scale, args.scale, args.scale];
         args.loc = loc;
-        this.connect(args, null, Kata.bind(this.connected, this));
+        var auth = '';
+        if (args.auth) auth = args.auth;
+        this.connect(args, auth, Kata.bind(this.connected, this));
 
         this.keyIsDown = {};
 

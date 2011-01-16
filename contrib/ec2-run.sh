@@ -60,6 +60,7 @@ echo "SIRIKATA_ROOT = '${DIR}/sirikata.git'" > config.god.rb
 echo "SPACE_PORT = 7777" >> config.god.rb
 echo "SIRIKATA_UID = 'ubuntu'" >> config.god.rb
 echo "SIRIKATA_MAX_MEMORY = 400.megabytes" >> config.god.rb
+echo "SIRIKATA_ARGS = '--space.plugins=weight-exp,weight-sqr,weight-const,space-null,space-local,space-standard,colladamodels,space-sqlite --auth=sqlite --auth-options=--db=${DIR}/kataspace.git/be.db'" >> config.god.rb
 
 # Copy the configuration locally, getting our config script in there.
 # Commenting out stop_timeout is currently required because Ubuntu's

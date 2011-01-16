@@ -23,6 +23,7 @@ while argi < len(sys.argv):
         conn.execute('create table if not exists users (user_id integer primary key, login text unique, password text, admin integer)')
         conn.execute('create table if not exists profiles (user_id integer primary key, name text, age integer, avatar text)')
         conn.execute('create table if not exists chat (user_id integer, time integer, msg text)')
+        conn.execute('create table if not exists session_auth (ticket text)')
         argi += 1
     elif arg == 'admin':
         # Note that these users are always admins, i.e. this is only

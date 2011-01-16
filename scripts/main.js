@@ -82,7 +82,8 @@ function loadGFX(){
                 space: SpaceURL,
                 name: UserName,
                 scale : avatarScale,
-                visual: {mesh: avatarURL}
+                visual: {mesh: avatarURL},
+                auth : AuthTicket
             });
         graphics = new Kata.GraphicsSimulation(driver, window.kata.getChannel(), document.getElementById("container"));
         session = new SessionUI(window.kata.getChannel());
