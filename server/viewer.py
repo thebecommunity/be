@@ -5,6 +5,7 @@ import template
 import auth
 import random
 import db
+import time
 
 @template.output('viewer.html')
 def handle_viewer(environ, start_response):
@@ -17,9 +18,10 @@ def handle_viewer(environ, start_response):
     # Insert into db so the space server can verify it
     c = db.conn.cursor()
     vals = {
-        'ticket' : space_auth
+        'ticket' : space_auth,
+        'time' : int(time.time()),
         }
-    c.execute('insert into session_auth(ticket) values(:ticket)', vals)
+    c.execute('insert into session_auth(ticket, time) values(:ticket, :time)', vals)
     c.close()
     db.conn.commit()
 
