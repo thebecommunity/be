@@ -6,6 +6,7 @@ import auth
 import profile
 import viewer
 import chat
+import session
 
 import re
 
@@ -21,6 +22,8 @@ static_handlers = {
     "/account/settings.js" : profile.handle_profile_settings_js,
     "/profile/edit" : profile.handle_edit,
     "/viewer" : viewer.handle_viewer,
+    "/session/begin" : session.handle_begin,
+    "/session/heartbeat" : session.handle_heartbeat,
     "/chat/report" : chat.handle_report,
     "/chat/log" : chat.handle_log
     }

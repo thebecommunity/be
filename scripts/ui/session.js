@@ -39,8 +39,29 @@ Kata.require([
     /** Tracks session events, presenting an error message if on disconnection. */
     SessionUI = function(channel) {
         SUPER.constructor.call(this, channel);
+
+        // Create session and start heartbeat service to keep it updated.
+        this._createSession();
+        setInterval(Kata.bind(this._heartbeatSession, this), 60*1000);
     };
     Kata.extend(SessionUI, SUPER);
+
+    SessionUI.prototype._createSession = function() {
+        var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+	var string_length = 8;
+	var sessid = '';
+	for (var i=0; i<string_length; i++) {
+	    var rnum = Math.floor(Math.random() * chars.length);
+	    sessid += chars[rnum];
+	}
+
+        this._sessid = sessid;
+        $.post('session/begin', { sessid: this._sessid });
+    };
+
+    SessionUI.prototype._heartbeatSession = function() {
+        $.post('session/heartbeat', { sessid: this._sessid });
+    };
 
     // GUISimulation interface
     SessionUI.prototype.handleGUIMessage = function(evt) {
