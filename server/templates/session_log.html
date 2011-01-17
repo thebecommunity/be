@@ -1,0 +1,26 @@
+<?python
+   import time
+?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+  <xi:include href="layout.html" />
+  <head>
+    <title>Session Log</title>
+  </head>
+  <body class="index">
+    <div class="page-title">Session Log</div>
+
+    <div py:for="user in users">
+      <h4>${user.user}</h4>
+      <div class="left-indent">
+        <ol class="session-log">
+          <li py:for="sess in user.sessions">
+            (${time.strftime('%x %X', sess.start)}) -> (${time.strftime('%x %X', sess.end)})
+          </li>
+        </ol>
+      </div>
+    </div>
+  </body>
+</html>

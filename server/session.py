@@ -74,3 +74,49 @@ def handle_heartbeat(environ, start_response):
 
     start_response('200 OK', [('Content-Type', 'text/html')])
     return []
+
+
+class Session:
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+
+class UserSessions:
+    def __init__(self, user):
+        self.user = user
+        self.sessions = []
+
+    def add(self, start, end):
+        self.sessions.append( Session(start, end) )
+
+@template.output('session_log.html')
+def handle_log(environ, start_response):
+
+    if not auth.check_admin(environ, start_response):
+        return []
+
+    start_response('200 OK', [('Content-Type', 'text/html')])
+
+    c = db.conn.cursor()
+    # FIXME query string to control this, at a minimum limit the time span
+    c.execute('select user_id,start,end from sessions order by user_id,start')
+
+    sessions = []
+    last_user_id = None
+    last_user = None
+
+    for row in c:
+        user_id = row[0]
+        if user_id != last_user_id:
+            last_user_id = user_id
+            last_user = UserSessions(profile.name(user_id))
+            sessions.append(last_user)
+        last_user.add(
+            time.gmtime(int(row[1])),
+            time.gmtime(int(row[2]))
+            )
+
+    c.close()
+
+    result = template.render(deployment=deployment,users=sessions)
+    return [result]

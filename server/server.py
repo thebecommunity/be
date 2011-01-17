@@ -24,6 +24,7 @@ static_handlers = {
     "/viewer" : viewer.handle_viewer,
     "/session/begin" : session.handle_begin,
     "/session/heartbeat" : session.handle_heartbeat,
+    "/session/log" : session.handle_log,
     "/chat/report" : chat.handle_report,
     "/chat/log" : chat.handle_log
     }
