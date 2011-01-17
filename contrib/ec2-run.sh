@@ -42,7 +42,8 @@ if [ ! -e sirikata.git ]; then
 fi
 
 # Run the main WSGI python server process
-./server/server.py &
+cd kataspace.git && ./server/server.py &
+cd ${DIR}
 
 # Run lighttpd as the web server
 cd kataspace.git || bail "Couldn't find KataSpace code."
@@ -53,7 +54,8 @@ sudo mkdir -p /tmp/lighttpdcompress || bail "Couldn't create lighttpd caching di
 sudo chown root:root /tmp/lighttpdcompress || bail "Couldn't chown lighttpd caching directory"
 # And then run our version
 sudo ./contrib/lighttpd.py 80 /tmp/lighttpdcompress &
-
+# Return to the top level directory
+cd ${DIR}
 
 # Generate our configuration
 echo "SIRIKATA_ROOT = '${DIR}/sirikata.git'" > config.god.rb
