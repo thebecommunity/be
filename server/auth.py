@@ -22,6 +22,7 @@ import db
 import template
 import cgi
 import profile
+import groups
 
 def hash_user_credential(cleartext_password):
     digest = sha1(cleartext_password).hexdigest()
@@ -229,13 +230,23 @@ def handle_add(environ, start_response):
 
     new_username = ''
     new_passwd = ''
+
+    # We must have groups setup
+    all_groups = groups.listing()
+    if not all_groups:
+        start_response('200 OK', [('Content-Type', 'text/html')])
+        result = template.render(deployment=deployment, username=new_username, password=new_passwd, need_group=True)
+        return [result]
+
     if environ['REQUEST_METHOD'] == 'POST':
         form = cgi.FieldStorage(fp=environ['wsgi.input'],
                                 environ=environ)
-        if 'username' in form:
+        if 'username' in form and 'group' in form:
             new_username = form['username'].value
             new_passwd = GenPasswd()
             digest = hash_user_credential(new_passwd)
+
+            new_group_id = form['group'].value
 
             c = db.conn.cursor()
             vals = {
@@ -248,10 +259,10 @@ def handle_add(environ, start_response):
 
             # Extract the new user id and setup a blank profile
             new_userid = lookup_userid(new_username)
-            profile.create_blank(new_userid, new_username)
+            profile.create_blank(new_userid, new_username, new_group_id)
 
     start_response('200 OK', [('Content-Type', 'text/html')])
-    result = template.render(deployment=deployment, username=new_username, password=new_passwd)
+    result = template.render(deployment=deployment, username=new_username, password=new_passwd, need_group=False, groups=all_groups)
     return [result]
 
 

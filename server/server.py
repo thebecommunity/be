@@ -8,6 +8,7 @@ import viewer
 import chat
 import session
 import space
+import groups
 
 import re
 
@@ -21,6 +22,7 @@ static_handlers = {
     "/account/add" : auth.handle_add,
     "/account/admin" : auth.handle_set_admin,
     "/account/settings.js" : profile.handle_profile_settings_js,
+    "/groups/admin" : groups.handle_admin,
     "/profile/edit" : profile.handle_edit,
     "/viewer" : viewer.handle_viewer,
     "/session/begin" : session.handle_begin,

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+  <xi:include href="layout.html" />
+<head>
+  <title>Manage Groups</title>
+</head>
+<body>
+  <div class="page-title">Manage Groups</div>
+
+  <div>
+    These are the current groups:
+    <ol>
+      <li py:for="g in groups">${g['name']}</li>
+    </ol>
+    <div py:if="not groups">(No groups yet)</div>
+  </div>
+
+  <div>
+    Add a group:
+    <form method="POST" action="/groups/admin">
+      <table border="0">
+        <tr>
+          <td>Name</td>
+          <td><input type="name" name="name"></input></td>
+        </tr>
+        <tr>
+          <td><input type="submit" name="submit" value="Create Group"/></td>
+        </tr>
+      </table>
+    </form>
+  </div>
+
+</body>
+</html>

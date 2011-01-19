@@ -11,18 +11,31 @@
 <py:when test="0">
   <div class="page-title">Add User</div>
   <br/>
-  <form method="POST" action="/account/add">
-    <table border="0">
-    <tr>
-      <td>User Name</td>
-      <td><input type="username" name="username"></input></td>
-    </tr>
-    <tr>
-      <td></td>
+  <py:if test="need_group">
+    <div>A <a href="/groups/admin">group</a> must exist before you can add a user.</div>
+  </py:if>
+  <py:if test="not need_group">
+    <form method="POST" action="/account/add">
+      <table border="0">
+        <tr>
+          <td>User Name</td>
+          <td><input type="username" name="username"></input></td>
+        </tr>
+        <tr>
+          <td>Group</td>
+          <td>
+            <select name="group">
+              <option py:for="group in groups" value="${group['id']}">${group['name']}</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td></td>
       <td><input type="submit" name="submit" value="Add User"/></td>
-    </tr>
-    </table>
-  </form>
+        </tr>
+      </table>
+    </form>
+  </py:if>
 </py:when>
 <py:otherwise>
   <div class="page-title">User Added</div>

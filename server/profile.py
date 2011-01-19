@@ -8,15 +8,16 @@ import deployment
 import cgi
 import sanitize
 
-def create_blank(userid, username):
+def create_blank(userid, username, group_id):
     c = db.conn.cursor()
     vals = {
         'id' : userid,
         'name' : username,
         'age' : 0,
-        'avatar' : ''
+        'avatar' : '',
+        'group_id' : group_id
         }
-    c.execute('insert into profiles(user_id,name,age,avatar) values(:id,:name,:age,:avatar)', vals)
+    c.execute('insert into profiles(user_id,name,age,avatar,group_id) values(:id,:name,:age,:avatar,:group_id)', vals)
     c.close()
     db.conn.commit()
 

@@ -5,6 +5,7 @@ import subprocess
 import os.path
 import stat
 import time
+import groups
 
 _ServerDir = os.path.dirname(__file__)
 _TopDir = os.path.join(_ServerDir, '..')
@@ -17,9 +18,13 @@ def _cfgfile():
     return os.path.join(_TopDir, 'sirikata-space-server.monitrc')
 
 def _generate_config():
-    servers = [
-        { 'name' : 'x', 'port' : 7777 }
-        ]
+    group_info = groups.listing()
+
+    servers = []
+    port = 7777
+    for gi in group_info:
+        servers.append( { 'name' : gi['name'], 'port' : port } )
+        port += 1
 
     cfg = """
     set daemon 15
