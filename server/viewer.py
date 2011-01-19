@@ -6,6 +6,8 @@ import auth
 import random
 import db
 import time
+import profile
+import groups
 
 @template.output('viewer.html')
 def handle_viewer(environ, start_response):
@@ -25,6 +27,10 @@ def handle_viewer(environ, start_response):
     c.close()
     db.conn.commit()
 
+    # Get profile information for group
+    user_id = auth.user(environ)
+    profile_info = profile.lookup_profile(user_id)
+
     start_response('200 OK', [('Content-Type', 'text/html')])
-    result = template.render(deployment=deployment, auth=space_auth)
+    result = template.render(deployment=deployment, auth=space_auth, port=groups.port(profile_info['group_id']))
     return [result]

@@ -6,15 +6,22 @@ import template
 import auth
 import deployment
 import cgi
+import space
+
+port_base = 7900
+
+def port(group_id):
+    """Gets the port that a specific group's space server will be located on."""
+    return port_base + int(group_id)
+
 
 def listing():
-    # Gets a listing of all groups, sorted
+    # Gets a listing of all groups, sorted by id
 
     c = db.conn.cursor()
     c.execute( 'select group_id, name from groups order by group_id')
 
-    # Login should be unique
-    results = [ {'id' : x[0], 'name' : x[1]} for x in c.fetchall() ]
+    results = [ {'id' : x[0], 'name' : x[1], 'port' : port(x[0])} for x in c.fetchall() ]
     return results
 
 
@@ -34,6 +41,9 @@ def handle_admin(environ, start_response):
             c.execute('insert into groups(name) values(:name)', vals)
             db.conn.commit()
             c.close()
+
+            # If we were successful, we need another space server
+            space.update()
 
     groups = listing()
 

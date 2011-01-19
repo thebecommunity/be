@@ -18,9 +18,8 @@ LandingPage = "/"
 LoginPage = "/account/login"
 
 # Replace to override the default of using the sirikata protocol on
-# the same host on Sirikata's default port of 7777. Note that this is
-# a javascript string
-SpaceURL = '"sirikata://" + window.location.hostname + ":7777"'
+# the same host.
+SpaceURL = '"sirikata://" + window.location.hostname'
 
 Avatars = {
     "Male" :

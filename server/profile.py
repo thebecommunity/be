@@ -24,7 +24,7 @@ def create_blank(userid, username, group_id):
 def lookup_profile(name):
     """Look up a user profile. Returns it as a set of key-value pairs."""
     c = db.conn.cursor()
-    c.execute( 'select name,age,avatar from profiles where user_id = :id', { 'id' : name } )
+    c.execute( 'select name,age,avatar,group_id from profiles where user_id = :id', { 'id' : name } )
 
     # Login should be unique
     results = c.fetchall()
@@ -42,13 +42,17 @@ def lookup_profile(name):
         avatar = deployment.Avatars[avatar_name]
     else:
         avatar_name = ''
+    group_id = result[3]
+    if group_id == None: group_id = 1
+    group_id = int(group_id)
 
     return {
         'user' : auth.username(name),
         'name' : result[0],
         'age' : result[1],
         'avatar_name' : avatar_name,
-        'avatar' : avatar
+        'avatar' : avatar,
+        'group_id' : group_id
         }
 
 def name(user_id):

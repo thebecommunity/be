@@ -21,10 +21,8 @@ def _generate_config():
     group_info = groups.listing()
 
     servers = []
-    port = 7777
     for gi in group_info:
-        servers.append( { 'name' : gi['name'], 'port' : port } )
-        port += 1
+        servers.append( { 'name' : gi['name'], 'port' : gi['port'] } )
 
     cfg = """
     set daemon 15
