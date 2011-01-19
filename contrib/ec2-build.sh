@@ -25,11 +25,9 @@ bail "Couldn't install required base system packages."
 sudo apt-get install -y lighttpd default-jre || \
 bail "Couldn't install required lighttpd system packages."
 
-# Install the god gem manually. The version in ubuntu is ancient.
-sudo apt-get install -y ruby1.8-dev rubygems || \
-bail "Couldn't install required ruby system packages."
-sudo gem install god || \
-bail "Couldn't install god."
+# Install monit.
+sudo apt-get install -y monit || \
+bail "Couldn't install required monit system packages."
 
 # Install flup for handling fcgi requests from lighttpd, i.e. for all
 # our server-side web application logic. Also install repoze.who which

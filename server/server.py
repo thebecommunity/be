@@ -7,6 +7,7 @@ import profile
 import viewer
 import chat
 import session
+import space
 
 import re
 
@@ -48,6 +49,8 @@ def myapp(environ, start_response):
 
 if __name__ == '__main__':
     from flup.server.fcgi import WSGIServer
+
+    space.run()
 
     app = auth.create_auth_middleware(myapp);
     WSGIServer(app, bindAddress=("localhost", 9999)).run()

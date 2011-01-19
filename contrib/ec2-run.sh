@@ -5,19 +5,6 @@
 # montoring and starts the lighttpd server.
 
 DIR=`pwd`
-GOD=/var/lib/gems/1.8/bin/god
-GOD_FLAGS=
-
-# Parse args to allow for debug mode
-until [ -z "$1" ]  # until all parameters used up
-do
-  case "$1" in
-      --debug)
-          GOD_FLAGS=-D
-          ;;
-  esac
-  shift
-done
 
 # Bail out with a message for the user
 function bail {
@@ -26,11 +13,6 @@ function bail {
 }
 
 # Check for required files
-if [ ! -e $GOD ]; then
-    echo "Couldn't find god at $GOD"
-    exit -1
-fi
-
 if [ ! -e kataspace.git ]; then
     echo "Couldn't find kataspace code."
     exit -1
@@ -56,20 +38,3 @@ sudo chown root:root /tmp/lighttpdcompress || bail "Couldn't chown lighttpd cach
 sudo ./contrib/lighttpd.py 80 /tmp/lighttpdcompress &
 # Return to the top level directory
 cd ${DIR}
-
-# Generate our configuration
-echo "SIRIKATA_ROOT = '${DIR}/sirikata.git'" > config.god.rb
-echo "SPACE_PORT = 7777" >> config.god.rb
-echo "SIRIKATA_UID = 'ubuntu'" >> config.god.rb
-echo "SIRIKATA_MAX_MEMORY = 400.megabytes" >> config.god.rb
-echo "SIRIKATA_ARGS = '--space.plugins=weight-exp,weight-sqr,weight-const,space-null,space-local,space-standard,colladamodels,space-sqlite --auth=sqlite --auth-options=--db=${DIR}/kataspace.git/be.db'" >> config.god.rb
-
-# Copy the configuration locally, getting our config script in there.
-# Commenting out stop_timeout is currently required because Ubuntu's
-# God doesn't support it.
-sed \
-    -e "s|/path/to/user/config.god.rb|config.god.rb|" \
-    -e "s|w.stop_timeout|#w.stop_timeout|" \
-    <sirikata.git/tools/space/space.god.rb >space.god.rb
-# Run the space server god script
-sudo $GOD -c space.god.rb $GOD_FLAGS
