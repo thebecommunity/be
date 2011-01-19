@@ -17,7 +17,9 @@ def _cfgfile():
     return os.path.join(_TopDir, 'sirikata-space-server.monitrc')
 
 def _generate_config():
-    name = 'x'
+    servers = [
+        { 'name' : 'x', 'port' : 7777 }
+        ]
 
     cfg = """
     set daemon 15
@@ -25,15 +27,19 @@ def _generate_config():
     set httpd port 2812
       use address localhost
       allow localhost
+    """ % { 'topdir' : _TopDir }
 
-    check process sirikata-space-server-%(name)s
-      with pidfile "%(pid)s"
-      start program = "%(serverdir)s/space_daemon.py %(pid)s %(sirikatadir)s/build/cmake/space --space.plugins=weight-exp,weight-sqr,weight-const,space-null,space-local,space-standard,colladamodels,space-sqlite --auth=sqlite --auth-options=--db=%(topdir)s/be.db" with timeout 60 seconds
-      stop program = "/bin/kill `cat %(pid)s`"
-      if 2 restarts within 3 cycles then timeout
-      if totalmem > 400 Mb then alert
-      if children > 255 for 5 cycles then stop
-    """ % { 'name' : name, 'pid' : _pidfile(name), 'port' : 7777, 'topdir' : _TopDir, 'serverdir' : _ServerDir, 'sirikatadir' : _SirikataDir }
+    for server in servers:
+        name = server['name']
+        cfg += """
+        check process sirikata-space-server-%(name)s
+          with pidfile "%(pid)s"
+          start program = "%(serverdir)s/space_daemon.py %(pid)s %(sirikatadir)s/build/cmake/space --space.plugins=weight-exp,weight-sqr,weight-const,space-null,space-local,space-standard,colladamodels,space-sqlite --auth=sqlite --auth-options=--db=%(topdir)s/be.db --servermap=local --servermap-options=--port=%(port)d" with timeout 60 seconds
+           stop program = "%(serverdir)s/space_daemon.py kill %(pid)s"
+          if 2 restarts within 3 cycles then timeout
+          if totalmem > 400 Mb then alert
+          if children > 255 for 5 cycles then stop
+          """ % { 'name' : name, 'pid' : _pidfile(name), 'port' : server['port'], 'topdir' : _TopDir, 'serverdir' : _ServerDir, 'sirikatadir' : _SirikataDir }
 
     f = open(_cfgfile(), 'w')
     f.write(cfg)
