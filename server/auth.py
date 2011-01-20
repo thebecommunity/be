@@ -213,7 +213,7 @@ def handle_passwd(environ, start_response):
 
             _set_passwd(user_id, new_passwd)
 
-            start_response('200 OK', [('Content-Type', 'text/html')])
+            start_response('303 See Other', [('Content-Type', 'text/plain'), ('Location', deployment.LandingPage)])
             return []
 
     # If we got here, we didn't get a full change password post, so generate the form for it
