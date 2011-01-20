@@ -8,23 +8,24 @@ import deployment
 import cgi
 import sanitize
 
-def create_blank(userid, username, group_id):
+def create_blank(userid, username, group_id, email):
     c = db.conn.cursor()
     vals = {
         'id' : userid,
         'name' : username,
         'age' : 0,
         'avatar' : '',
-        'group_id' : group_id
+        'group_id' : group_id,
+        'email' : email
         }
-    c.execute('insert into profiles(user_id,name,age,avatar,group_id) values(:id,:name,:age,:avatar,:group_id)', vals)
+    c.execute('insert into profiles(user_id,name,age,avatar,group_id,email) values(:id,:name,:age,:avatar,:group_id,:email)', vals)
     c.close()
     db.conn.commit()
 
 def lookup_profile(name):
     """Look up a user profile. Returns it as a set of key-value pairs."""
     c = db.conn.cursor()
-    c.execute( 'select name,age,avatar,group_id from profiles where user_id = :id', { 'id' : name } )
+    c.execute( 'select name,age,avatar,group_id,email from profiles where user_id = :id', { 'id' : name } )
 
     # Login should be unique
     results = c.fetchall()
@@ -52,7 +53,8 @@ def lookup_profile(name):
         'age' : result[1],
         'avatar_name' : avatar_name,
         'avatar' : avatar,
-        'group_id' : group_id
+        'group_id' : group_id,
+        'email' : result[4]
         }
 
 def name(user_id):
@@ -164,6 +166,6 @@ def handle_edit(environ, start_response):
     # Try to get data for the form filler
     profile_info = lookup_profile(user_id)
     start_response('200 OK', [('Content-Type', 'text/html')])
-    result = template.generate(deployment=deployment,updated=updated,failed_update=failed_update) | template.HTMLFormFiller(data=profile_info)
+    result = template.generate(deployment=deployment,updated=updated,failed_update=failed_update,profile=profile_info) | template.HTMLFormFiller(data=profile_info)
     result = result.render(template.format)
     return [result]

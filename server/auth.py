@@ -241,12 +241,13 @@ def handle_add(environ, start_response):
     if environ['REQUEST_METHOD'] == 'POST':
         form = cgi.FieldStorage(fp=environ['wsgi.input'],
                                 environ=environ)
-        if 'username' in form and 'group' in form:
+        if 'username' in form and 'group' in form and 'email' in form:
             new_username = form['username'].value
             new_passwd = GenPasswd()
             digest = hash_user_credential(new_passwd)
 
             new_group_id = form['group'].value
+            new_email = form['email'].value
 
             c = db.conn.cursor()
             vals = {
@@ -259,7 +260,7 @@ def handle_add(environ, start_response):
 
             # Extract the new user id and setup a blank profile
             new_userid = lookup_userid(new_username)
-            profile.create_blank(new_userid, new_username, new_group_id)
+            profile.create_blank(new_userid, new_username, new_group_id, new_email)
 
     start_response('200 OK', [('Content-Type', 'text/html')])
     result = template.render(deployment=deployment, username=new_username, password=new_passwd, need_group=False, groups=all_groups)
