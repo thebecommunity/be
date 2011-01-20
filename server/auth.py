@@ -185,6 +185,18 @@ def handle_logout(environ, start_response):
     start_response('303 See Other', [('Content-Type', 'text/plain'), ('Location', deployment.LandingPage)])
     return []
 
+def _set_passwd(user_id, new_passwd):
+    digest = hash_user_credential(new_passwd)
+
+    c = db.conn.cursor()
+    vals = {
+        'id' : user_id,
+        'password' : digest
+        }
+    c.execute('update users set password = :password where user_id = :id', vals)
+    db.conn.commit()
+    c.close()
+
 @template.output('passwd.html')
 def handle_passwd(environ, start_response):
     # If we're already authorized, ignore
@@ -198,16 +210,8 @@ def handle_passwd(environ, start_response):
             user_id = user(environ)
 
             new_passwd = form['password'].value
-            digest = hash_user_credential(new_passwd)
 
-            c = db.conn.cursor()
-            vals = {
-                'id' : user_id,
-                'password' : digest
-                }
-            c.execute('update users set password = :password where user_id = :id', vals)
-            db.conn.commit()
-            c.close()
+            _set_passwd(user_id, new_passwd)
 
             start_response('200 OK', [('Content-Type', 'text/html')])
             return []
@@ -269,7 +273,7 @@ def handle_add(environ, start_response):
                 "Welcome to %s!" % (deployment.title),
                 """Welcome!
 
-Your new account, with username '%s' has been created.  Your temporary password is '%s'.  Please change it
+Your new account, with username '%s' has been created.  Your temporary password is '%s'.  Please change it the next time you log in.
 
 Thanks,
 %s
@@ -278,6 +282,51 @@ Thanks,
     start_response('200 OK', [('Content-Type', 'text/html')])
     result = template.render(deployment=deployment, username=new_username, password=new_passwd, need_group=False, groups=all_groups)
     return [result]
+
+
+@template.output('forgot_password.html')
+def handle_forgot(environ, start_response):
+    # Unlike usual, if we're authorized, this is not the right page for them.
+    if authorized(environ):
+        start_response('303 See Other', [('Content-Type', 'text/plain'), ('Location', deployment.LandingPage)])
+        return []
+
+    # If we have an email address, do the lookup & reset and generate a simple response page.
+    reset_tried = False
+    reset_succeeded = False
+    email = ''
+    if environ['REQUEST_METHOD'] == 'POST':
+        form = cgi.FieldStorage(fp=environ['wsgi.input'],
+                                environ=environ)
+        if 'email' in form:
+            email = form['email'].value
+            reset_tried = True
+
+            # Lookup this email address
+            user_id = profile.userid_by_email(email)
+            if user_id:
+                new_passwd = GenPasswd()
+                _set_passwd(user_id, new_passwd)
+
+                profile_info = profile.lookup_profile(user_id)
+                # Email the new user with the info
+                mail.send(
+                    email, profile_info['name'],
+                    "Reset Password for %s!" % (deployment.title),
+                    """A password reset was requested for the account '%s' associated with this email address.  Your new temporary password is '%s'. Please change it the next time you log in.
+
+Thanks,
+%s
+""" % (profile_info['name'], new_passwd, deployment.title)
+                    )
+
+                reset_succeeded = True
+
+    # Otherwise, generate the form
+    start_response('200 OK', [('Content-Type', 'text/html')])
+    result = template.render(deployment=deployment, reset_tried=reset_tried, reset_succeeded=reset_succeeded, email=email)
+    return [result]
+
 
 
 def get_users_with_admin(admin_is=True):

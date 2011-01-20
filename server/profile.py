@@ -73,6 +73,22 @@ def name(user_id):
 
     return results[0]
 
+def userid_by_email(email):
+    """Look up a user's id by their email address."""
+    c = db.conn.cursor()
+    c.execute( 'select user_id from profiles where email = :email', { 'email' : email } )
+
+    # Login should be unique
+    results = c.fetchall()
+    if len(results) != 1:
+        c.close()
+        return None
+    (result,) = results
+
+    c.close()
+
+    return result[0]
+
 def _extract_url_username(environ):
     # Extract the name from the url, e.g. /user/xyz/abc
     user = environ['PATH_INFO']
