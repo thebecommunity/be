@@ -23,6 +23,7 @@ import template
 import cgi
 import profile
 import groups
+import mail
 
 def hash_user_credential(cleartext_password):
     digest = sha1(cleartext_password).hexdigest()
@@ -262,6 +263,18 @@ def handle_add(environ, start_response):
             new_userid = lookup_userid(new_username)
             profile.create_blank(new_userid, new_username, new_group_id, new_email)
 
+            # Email the new user with the info
+            mail.send(
+                new_email, new_username,
+                "Welcome to %s!" % (deployment.title),
+                """Welcome!
+
+Your new account, with username '%s' has been created.  Your temporary password is '%s'.  Please change it
+
+Thanks,
+%s
+""" % (new_username, new_passwd, deployment.title)
+                )
     start_response('200 OK', [('Content-Type', 'text/html')])
     result = template.render(deployment=deployment, username=new_username, password=new_passwd, need_group=False, groups=all_groups)
     return [result]
