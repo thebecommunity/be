@@ -13,7 +13,7 @@ def hash_user_credential(cleartext_password):
     return digest
 
 
-conn = sqlite3.connect('be.db')
+conn = sqlite3.connect('data/be.db')
 
 
 argi = 1

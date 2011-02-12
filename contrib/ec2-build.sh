@@ -35,6 +35,10 @@ bail "Couldn't install required monit system packages."
 sudo apt-get install -y python-flup python-repoze.who python-genshi ||
 bail "Couldn't install flup."
 
+# Install encfs to encrypt the database.
+sudo apt-get install -y encfs || \
+bail "Couldn't install required encfs system packages."
+
 # Check out and build Sirikata space server
 git clone git://github.com/sirikata/sirikata.git sirikata.git && \
 cd sirikata.git && \
@@ -50,6 +54,15 @@ git clone git://github.com/sirikata/kataspace.git kataspace.git && \
 cd kataspace.git && \
 make || \
 bail "Couldn't build kataspace."
+
+# Create the space for the encrypted filesystem. You *must* run this
+# interactively in order to set the password for the filesystem. Make
+# sure you can remember this password or store it some place secure --
+# it cannot be reset!
+cd ${DIR} && \
+cd kataspace.git && \
+./contrib/encfs.sh create ||
+bail "Couldn't create encrypted directory for database."
 
 # Create database, adding user 'admin' with password 'admin'. Be sure to change this!
 cd ${DIR} && \
