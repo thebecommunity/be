@@ -8,7 +8,7 @@ from repoze.who.interfaces import IChallenger
 from repoze.who.plugins.auth_tkt import AuthTktCookiePlugin
 from repoze.who.plugins.cookie import InsecureCookiePlugin
 from repoze.who.plugins.form import RedirectingFormPlugin
-from repoze.who.plugins.sql import SQLAuthenticatorPlugin
+from sqlauth import SQLAuthenticatorPlugin
 from repoze.who.middleware import PluggableAuthenticationMiddleware
 from repoze.who.classifiers import default_request_classifier
 
@@ -45,8 +45,9 @@ def _challenge_decider(environ, status, headers):
 
 def create_auth_middleware(app):
     sqlpasswd = SQLAuthenticatorPlugin(
-        'SELECT user_id, password FROM users WHERE login = :login',
+        'SELECT user_id, password FROM users NATURAL JOIN profiles WHERE (login = :login or name = :login) and password = :hashed_password',
         db.create_db_conn,
+        hash_user_credential,
         validate_user_credential
         )
     auth_tkt = AuthTktCookiePlugin(deployment.cookie_secret, 'auth_tkt')
