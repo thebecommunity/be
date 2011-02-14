@@ -81,7 +81,7 @@ Kata.require([
 
     Example.BlessedScript.prototype.handleChatGUIMessage = function(msg) {
         var revt = msg.event;
-        this.mChatBehavior.chat(revt.msg);
+        this.mChatBehavior.chat(revt);
     };
 
     Example.BlessedScript.prototype.updateSittingAnimation = function() {
