@@ -50,8 +50,8 @@ bail "Couldn't build space server."
 
 # Checkout and "build" Kataspace
 cd ${DIR} && \
-git clone git://github.com/sirikata/kataspace.git kataspace.git && \
-cd kataspace.git && \
+git clone git://github.com/thebecommunity/be.git be.git && \
+cd be.git && \
 make || \
 bail "Couldn't build kataspace."
 
@@ -60,11 +60,11 @@ bail "Couldn't build kataspace."
 # sure you can remember this password or store it some place secure --
 # it cannot be reset!
 cd ${DIR} && \
-cd kataspace.git && \
+cd be.git && \
 ./contrib/encfs.sh create ||
 bail "Couldn't create encrypted directory for database."
 
 # Create database, adding user 'admin' with password 'admin'. Be sure to change this!
 cd ${DIR} && \
-cd kataspace.git && \
+cd be.git && \
 ./contrib/db.py init admin admin admin

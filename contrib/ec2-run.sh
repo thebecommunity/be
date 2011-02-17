@@ -13,7 +13,7 @@ function bail {
 }
 
 # Check for required files
-if [ ! -e kataspace.git ]; then
+if [ ! -e be.git ]; then
     echo "Couldn't find kataspace code."
     exit -1
 fi
@@ -24,11 +24,11 @@ if [ ! -e sirikata.git ]; then
 fi
 
 # Run the main WSGI python server process
-cd kataspace.git && ./server/server.py &
+cd be.git && ./server/server.py &
 cd ${DIR}
 
 # Run lighttpd as the web server
-cd kataspace.git || bail "Couldn't find KataSpace code."
+cd be.git || bail "Couldn't find KataSpace code."
 # lighttpd on Ubuntu starts itself automatically, so stop it first
 sudo /etc/init.d/lighttpd stop
 # Setup caching directory
