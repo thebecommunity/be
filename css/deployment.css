@@ -55,6 +55,11 @@ a.chat-link { color: #000000; }
     font-weight: bolder;
 }
 
+div.section {
+    padding-top: 20px;
+    font-weight: bolder;
+}
+
 .left-indent {
     margin-left: 20px;
 }

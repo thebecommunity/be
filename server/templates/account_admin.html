@@ -4,15 +4,19 @@
       xmlns:py="http://genshi.edgewall.org/">
   <xi:include href="layout.html" />
 <head>
-  <title>Set Administrative Users</title>
+  <title>Manage Users</title>
 </head>
 <body>
-  <div class="page-title">Set Admins</div>
+  <div class="page-title">Manage Users</div>
+
+  <div py:if="msg" class="section">${msg}</div>
+
+  <div class="section">Set Admins</div>
 
   <div>
     These users are currently admins:
     <form method="POST" action="/account/admin">
-      <input type="hidden" name="revoke" value="revoke"></input>
+      <input type="hidden" name="action" value="revoke"></input>
       <select name="username">
         <option py:for="admin in admins">${admin}</option>
       </select>
@@ -23,10 +27,24 @@
   <div>
     These users are not currently admins:
     <form method="POST" action="/account/admin">
+      <input type="hidden" name="action" value="admin"></input>
       <select name="username">
         <option py:for="not_admin in not_admins">${not_admin}</option>
       </select>
       <td><input type="submit" name="submit" value="Make User Admin"/></td>
+    </form>
+  </div>
+
+  <div class="section">Delete User</div>
+  <div>
+    Only users without admin privileges can be deleted. To delete an
+    admin, revoke their admin privileges and then delete them.
+    <form method="POST" action="/account/admin">
+      <input type="hidden" name="action" value="delete"></input>
+      <select name="username">
+        <option py:for="user in not_admins">${user}</option>
+      </select>
+      <td><input type="submit" name="submit" value="Delete User"/></td>
     </form>
   </div>
 

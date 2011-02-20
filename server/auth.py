@@ -330,6 +330,16 @@ Thanks,
 
 
 
+def get_users():
+    c = db.conn.cursor()
+    c.execute('select login from users')
+
+    results = c.fetchall()
+    results = [r[0] for r in results]
+
+    c.close()
+    return results
+
 def get_users_with_admin(admin_is=True):
     if admin_is:
         admin_val = 1
@@ -345,35 +355,65 @@ def get_users_with_admin(admin_is=True):
     c.close()
     return results
 
-@template.output('set_admin.html')
-def handle_set_admin(environ, start_response):
+def update_admin(username, admin_setting):
+    c = db.conn.cursor()
+    vals = {
+        'username' : username,
+        'admin' : admin_setting
+        }
+    c.execute('update users set admin = :admin where login = :username', vals)
+    db.conn.commit()
+    c.close()
+
+def delete_user(username):
+    userid = lookup_userid(username)
+
+    # We need to sanity check that they aren't going to make the database break.
+    c = db.conn.cursor()
+    vals = {
+        'id' : userid,
+        }
+    c.execute('select * from chat where user_id = :id', vals)
+    results = c.fetchall()
+    if len(results) > 0: return 'Cannot delete a user who appears in the chat log.'
+
+    c.execute('select * from sessions where user_id = :id', vals)
+    if len(results) > 0: return 'Cannot delete a user who appears in the session log.'
+
+    c.execute('delete from users where user_id = :id', vals)
+    c.execute('delete from profiles where user_id = :id', vals)
+
+    db.conn.commit()
+    c.close()
+
+@template.output('account_admin.html')
+def handle_account_admin(environ, start_response):
     # If we're already authorized, ignore
     if not check_admin(environ, start_response):
         return []
 
+    msg = '' # Message for actions taken
     if environ['REQUEST_METHOD'] == 'POST':
         form = cgi.FieldStorage(fp=environ['wsgi.input'],
                                 environ=environ)
-        if 'username' in form:
+        if 'username' in form and 'action' in form:
             username = form['username'].value
+            action = form['action'].value
 
-            admin_setting = 1
-            if 'revoke' in form:
-                admin_setting = 0
-
-            c = db.conn.cursor()
-            vals = {
-                'username' : username,
-                'admin' : admin_setting
-                }
-            c.execute('update users set admin = :admin where login = :username', vals)
-            db.conn.commit()
-            c.close()
+            if action == 'admin':
+                update_admin(username, 1)
+                msg = 'User admin status updated.'
+            elif action == 'revoke':
+                update_admin(username, 0)
+                msg = 'User admin status updated.'
+            elif action == 'delete':
+                msg = delete_user(username)
 
     # Get lists for both admins and non-admins
     admins = get_users_with_admin(True)
     not_admins = get_users_with_admin(False)
+    users = get_users()
 
     start_response('200 OK', [('Content-Type', 'text/html')])
-    result = template.render(deployment=deployment, admins=admins, not_admins=not_admins)
+    result = template.render(deployment=deployment, users=users, admins=admins, not_admins=not_admins, msg=msg)
     return [result]

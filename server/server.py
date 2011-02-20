@@ -21,7 +21,7 @@ static_handlers = {
     "/account/password" : auth.handle_passwd,
     "/account/add" : auth.handle_add,
     "/account/forgot" : auth.handle_forgot,
-    "/account/admin" : auth.handle_set_admin,
+    "/account/admin" : auth.handle_account_admin,
     "/account/settings.js" : profile.handle_profile_settings_js,
     "/groups/admin" : groups.handle_admin,
     "/profile/edit" : profile.handle_edit,
