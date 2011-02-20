@@ -29,7 +29,7 @@ def handle_report(environ, start_response):
     vals = {
         'id' : user_id,
         'time' : int(time.time()),
-        'msg' : msg
+        'msg' : unicode(msg, 'utf-8')
         }
     c.execute('insert into chat (user_id, time, msg) values(:id, :time, :msg)', vals)
     db.conn.commit()
@@ -53,7 +53,7 @@ def handle_log(environ, start_response):
     if not auth.check_admin(environ, start_response):
         return []
 
-    start_response('200 OK', [('Content-Type', 'text/html')])
+    start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
 
     c = db.conn.cursor()
     # FIXME query string to control this, at a minimum limit the time span
