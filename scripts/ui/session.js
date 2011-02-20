@@ -72,7 +72,7 @@ Kata.require([
         var msg, title;
         if (evt.msg == 'connection') {
             title = "Failed to connect";
-            msg = "The server couldn't authenticate you.";
+            msg = "Couldn't connect: " + revt.reason;
         }
         else if (evt.msg == 'disconnected') {
             title = "Connection Lost";
