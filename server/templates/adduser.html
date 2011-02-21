@@ -14,6 +14,9 @@
   <py:if test="need_group">
     <div>A <a href="/groups/admin">group</a> must exist before you can add a user.</div>
   </py:if>
+  <py:if test="existing_user">
+    <div>A user with that name already exists. Please try a new username.</div>
+  </py:if>
   <py:if test="not need_group">
     <form method="POST" action="/account/add">
       <table border="0">

@@ -241,7 +241,7 @@ def handle_add(environ, start_response):
     all_groups = groups.listing()
     if not all_groups:
         start_response('200 OK', [('Content-Type', 'text/html')])
-        result = template.render(deployment=deployment, username=new_username, password=new_passwd, need_group=True)
+        result = template.render(deployment=deployment, username=new_username, password=new_passwd, need_group=True, existing_user=False)
         return [result]
 
     if environ['REQUEST_METHOD'] == 'POST':
@@ -254,6 +254,12 @@ def handle_add(environ, start_response):
 
             new_group_id = form['group'].value
             new_email = form['email'].value
+
+            existing_userid = lookup_userid(new_username)
+            if existing_userid != None:
+                start_response('200 OK', [('Content-Type', 'text/html')])
+                result = template.render(deployment=deployment, username='', password='', need_group=False, existing_user=True, groups=all_groups)
+                return [result]
 
             c = db.conn.cursor()
             vals = {
@@ -281,7 +287,7 @@ Thanks,
 """ % (new_username, new_passwd, deployment.title)
                 )
     start_response('200 OK', [('Content-Type', 'text/html')])
-    result = template.render(deployment=deployment, username=new_username, password=new_passwd, need_group=False, groups=all_groups)
+    result = template.render(deployment=deployment, username=new_username, password=new_passwd, need_group=False, existing_user=False, groups=all_groups)
     return [result]
 
 
