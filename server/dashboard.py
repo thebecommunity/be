@@ -15,6 +15,6 @@ def handle_dashboard(environ, start_response):
     name = profile.name(user_id)
     admin = auth.is_admin(user_id)
 
-    start_response('200 OK', [('Content-Type', 'text/html')])
+    start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
     result = template.render(deployment=deployment, name=name, admin=admin)
     return [result]

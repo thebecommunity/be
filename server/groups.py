@@ -47,6 +47,6 @@ def handle_admin(environ, start_response):
 
     groups = listing()
 
-    start_response('200 OK', [('Content-Type', 'text/html')])
+    start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
     result = template.render(deployment=deployment, groups=groups)
     return [result]

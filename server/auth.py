@@ -175,7 +175,7 @@ def handle_login(environ, start_response):
         came_from = environ['QUERY_STRING'].replace('came_from=', '', 1)
         came_from = urllib.unquote(came_from)
 
-    start_response('200 OK', [('Content-Type', 'text/html')])
+    start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
     result = template.render(deployment=deployment, came_from=came_from)
     return [result]
 
@@ -218,7 +218,7 @@ def handle_passwd(environ, start_response):
             return []
 
     # If we got here, we didn't get a full change password post, so generate the form for it
-    start_response('200 OK', [('Content-Type', 'text/html')])
+    start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
     result = template.render(deployment=deployment)
     return [result]
 
@@ -240,7 +240,7 @@ def handle_add(environ, start_response):
     # We must have groups setup
     all_groups = groups.listing()
     if not all_groups:
-        start_response('200 OK', [('Content-Type', 'text/html')])
+        start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
         result = template.render(deployment=deployment, username=new_username, password=new_passwd, need_group=True, existing_user=False)
         return [result]
 
@@ -248,7 +248,7 @@ def handle_add(environ, start_response):
         form = cgi.FieldStorage(fp=environ['wsgi.input'],
                                 environ=environ)
         if 'username' in form and 'group' in form and 'email' in form:
-            new_username = form['username'].value
+            new_username = unicode(form['username'].value, 'utf-8')
             new_passwd = GenPasswd()
             digest = hash_user_credential(new_passwd)
 
@@ -257,7 +257,7 @@ def handle_add(environ, start_response):
 
             existing_userid = lookup_userid(new_username)
             if existing_userid != None:
-                start_response('200 OK', [('Content-Type', 'text/html')])
+                start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
                 result = template.render(deployment=deployment, username='', password='', need_group=False, existing_user=True, groups=all_groups)
                 return [result]
 
@@ -286,7 +286,7 @@ Thanks,
 %s
 """ % (new_username, new_passwd, deployment.title)
                 )
-    start_response('200 OK', [('Content-Type', 'text/html')])
+    start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
     result = template.render(deployment=deployment, username=new_username, password=new_passwd, need_group=False, existing_user=False, groups=all_groups)
     return [result]
 
@@ -330,7 +330,7 @@ Thanks,
                 reset_succeeded = True
 
     # Otherwise, generate the form
-    start_response('200 OK', [('Content-Type', 'text/html')])
+    start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
     result = template.render(deployment=deployment, reset_tried=reset_tried, reset_succeeded=reset_succeeded, email=email)
     return [result]
 
@@ -403,7 +403,7 @@ def handle_account_admin(environ, start_response):
         form = cgi.FieldStorage(fp=environ['wsgi.input'],
                                 environ=environ)
         if 'username' in form and 'action' in form:
-            username = form['username'].value
+            username = unicode(form['username'].value, 'utf-8')
             action = form['action'].value
 
             if action == 'admin':
@@ -420,6 +420,6 @@ def handle_account_admin(environ, start_response):
     not_admins = get_users_with_admin(False)
     users = get_users()
 
-    start_response('200 OK', [('Content-Type', 'text/html')])
+    start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
     result = template.render(deployment=deployment, users=users, admins=admins, not_admins=not_admins, msg=msg)
     return [result]

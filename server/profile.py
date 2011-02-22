@@ -95,7 +95,7 @@ def _extract_url_username(environ):
     user = user.replace('/', '', 1)
     user = user[:user.find('/')]
 
-    return user
+    return unicode(user, 'utf-8')
 
 def handle_profile_json(environ, start_response):
     if not auth.check_auth(environ, start_response):
@@ -139,10 +139,10 @@ def handle_profile_widget(environ, start_response):
     profile_info = lookup_profile(user_id)
 
     if profile_info == None:
-        start_response('404 Not Found', [('Content-Type', 'text/html')])
+        start_response('404 Not Found', [('Content-Type', 'text/html; charset=utf-8')])
         return []
 
-    start_response('200 OK', [('Content-Type', 'text/html')])
+    start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
     result = template.render(deployment=deployment,profile=profile_info)
     return [result]
 
@@ -162,7 +162,7 @@ def handle_edit(environ, start_response):
                                 environ=environ)
         if 'name' in form and 'age' in form:
             try:
-                new_name = sanitize.text(form['name'].value)
+                new_name = unicode(sanitize.text(form['name'].value), 'utf-8')
                 new_age = sanitize.integer(form['age'].value)
                 new_avatar = sanitize.text(form['avatar_name'].value)
                 new_vals = {
@@ -181,7 +181,7 @@ def handle_edit(environ, start_response):
 
     # Try to get data for the form filler
     profile_info = lookup_profile(user_id)
-    start_response('200 OK', [('Content-Type', 'text/html')])
+    start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
     result = template.generate(deployment=deployment,updated=updated,failed_update=failed_update,profile=profile_info) | template.HTMLFormFiller(data=profile_info)
     result = result.render(template.format)
     return [result]

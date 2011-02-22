@@ -30,7 +30,7 @@ def handle_begin(environ, start_response):
 
     sessid = _extract_session_id(environ)
     if not sessid:
-        start_response('200 OK', [('Content-Type', 'text/html')])
+        start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
         return []
 
     c = db.conn.cursor()
@@ -44,7 +44,7 @@ def handle_begin(environ, start_response):
 
     c.close()
 
-    start_response('200 OK', [('Content-Type', 'text/html')])
+    start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
     return []
 
 
@@ -58,7 +58,7 @@ def handle_heartbeat(environ, start_response):
 
     sessid = _extract_session_id(environ)
     if not sessid:
-        start_response('200 OK', [('Content-Type', 'text/html')])
+        start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
         return []
 
     c = db.conn.cursor()
@@ -72,7 +72,7 @@ def handle_heartbeat(environ, start_response):
 
     c.close()
 
-    start_response('200 OK', [('Content-Type', 'text/html')])
+    start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
     return []
 
 
@@ -95,7 +95,7 @@ def handle_log(environ, start_response):
     if not auth.check_admin(environ, start_response):
         return []
 
-    start_response('200 OK', [('Content-Type', 'text/html')])
+    start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
 
     c = db.conn.cursor()
     # FIXME query string to control this, at a minimum limit the time span

@@ -36,7 +36,7 @@ def handle_report(environ, start_response):
 
     c.close()
 
-    start_response('200 OK', [('Content-Type', 'text/html')])
+    start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
     return []
 
 

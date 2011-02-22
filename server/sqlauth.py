@@ -91,6 +91,7 @@ class SQLAuthenticatorPlugin:
     def authenticate(self, environ, identity):
         if not 'login' in identity or not 'password' in identity:
             return None
+        identity['login'] = unicode(identity['login'], 'utf-8')
         identity['hashed_password'] = self.hash_fn(identity['password'])
         if not self.conn:
             self.conn = self.conn_factory()
