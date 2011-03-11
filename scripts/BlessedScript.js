@@ -4,6 +4,7 @@ var Example;
 
 Kata.require([
     'katajs/oh/GraphicsScript.js',
+    'katajs/core/Quaternion.js',
 // FIXME we want to be able to specify a centralized offset so we
 // don't have to have this ../../ stuff here.
     '../../scripts/behavior/chat/Chat.js',
@@ -23,7 +24,7 @@ Kata.require([
         var zoff = ((Math.random() - 0.5) * 2.0) * 5.0;
         var loc = Kata.LocationIdentity();
         loc.pos = [xoff, this._scale * 1.0, zoff];
-        loc.scale = [args.scale, args.scale, args.scale];
+        loc.scale = [0, 0, 0, args.scale];
         args.loc = loc;
         var auth = '';
         if (args.auth) auth = args.auth;
@@ -139,7 +140,9 @@ Kata.require([
         // FIXME both this and the camera controls in GraphicsScript
         // are running on timers because the ones in GraphicsScript
         // don't accept velocity
+        this.queryMeshAspectRatio(presence,presence);
         this.mCamUpdateTimer = setInterval(Kata.bind(this.updateCamera, this), 60);
+
         Kata.warn("Got connected callback.");
     };
 
@@ -163,6 +166,7 @@ Kata.require([
     };
 
     Example.BlessedScript.prototype._handleGUIMessage = function (channel, msg) {
+        Kata.GraphicsScript.prototype._handleGUIMessage.call(this,channel,msg);
         if (msg.msg == 'chat')
             this.handleChatGUIMessage(msg);
 
@@ -199,7 +203,7 @@ Kata.require([
             */
         }
         if (msg.msg == "keyup") {
-            this.keyIsDown[msg.event.keyCode] = false;
+            this.keyIsDown[msg.keyCode] = false;
 
             if ( !this.keyIsDown[this.Keys.UP] && !this.keyIsDown[this.Keys.DOWN])
                 this.mPresence.setVelocity([0, 0, 0]);
@@ -216,14 +220,14 @@ Kata.require([
             var avZX = avMat[2][0] * avSpeed;
             var avZY = avMat[2][1] * avSpeed;
             var avZZ = avMat[2][2] * avSpeed;
-            this.keyIsDown[msg.event.keyCode] = true;
+            this.keyIsDown[msg.keyCode] = true;
 
             if (this.keyIsDown[this.Keys.UP]) {
                 this.mPresence.setVelocity([-avZX, -avZY, -avZZ]);
                 this.disableSitting();
             }
             if (this.keyIsDown[this.Keys.DOWN]) {
-                //this.mPresence.setVelocity([avZX, avZY, avZZ]);
+                this.mPresence.setVelocity([avZX, avZY, avZZ]);
             }
             var full_rot_seconds = 10.0;
             if (this.keyIsDown[this.Keys.LEFT]) {
@@ -253,7 +257,7 @@ Kata.require([
 
     Example.BlessedScript.prototype._getVerticalOffset = function(remote) {
         // FIXME there should be a better way of deciding this
-        return (remote._animatedState && (remote._animatedState.idle == 'sit')) ? 0 : 1;
+        return (remote._animatedState && (remote._animatedState.idle == 'sit')) ? .75 : 1.5;
     };
     Example.BlessedScript.prototype._getHorizontalOffset = function() {
         return 3;

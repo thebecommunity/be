@@ -42,6 +42,20 @@ Avatars = {
         'url' : "femaleWalkIdleSit.dae",
         'scale' : 1.0,
         'preview' : "femaleheadshot.png"
+    },
+    "MaleBrown" :
+    {
+        'name' : "MaleBrown",
+        'url' : "maleWalkIdleSitBrown.dae",
+        'scale' : 1.0,
+        'preview' : "malebrownheadshot.png"
+    },
+    "FemaleBlonde" :
+    {
+        'name' : "FemaleBlonde",
+        'url' : "femaleWalkIdleSitBlonde.dae",
+        'scale' : 1.0,
+        'preview' : "femaleblondeheadshot.png"
     }
 }
 DefaultAvatar = "Male"
